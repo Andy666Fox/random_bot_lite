@@ -1,7 +1,7 @@
 [project]
 name = "random-bot-lite"
 version = "0.1.0"
-description = "Add your description here"
+description = "Random telegram channel bot"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
