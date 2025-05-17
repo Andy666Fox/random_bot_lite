@@ -9,7 +9,7 @@ class BasicMW(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any]) -> Any:
         ####
-        print(f'I Got {data['state']}')
+        print(f'I Got {data['event_from_user']}')
         ####
         result = await handler(event, data)
         return result
