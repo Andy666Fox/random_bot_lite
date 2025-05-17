@@ -1,8 +1,12 @@
 from typing import Any, Callable, Dict, Awaitable
 from aiogram import BaseMiddleware
-from aiogram.types import TelegramObject
+from aiogram.types import TelegramObject, Message
+from aiogram import F
+import time
 
 class BasicMW(BaseMiddleware):
+    '''parent middleware, contains basic mw functionality
+    '''
     async def __call__(
             self, 
             handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
@@ -11,5 +15,34 @@ class BasicMW(BaseMiddleware):
         ####
         print(f'I Got {data['event_from_user']}')
         ####
-        result = await handler(event, data)
-        return result
+        return await handler(event, data)
+
+class CooldownMW(BaseMiddleware):
+    ''' Middleware for antispam control
+    '''
+    def __init__(self):
+        self.user_last_action = {}
+
+    async def __call__(
+            self,
+            handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
+            event: Message,
+            data: Dict[str, Any]) -> Any:
+        #if F.text != 'Найти канал':
+            #return await handler(event, data)
+
+        # check the user last action time
+        user_id = event.from_user.id
+        current_time = time.time()
+        last_action = self.user_last_action.get(user_id)
+
+        # send warning message if duration less than 3 seconds
+        if last_action and (current_time - last_action) < 3:
+            await event.answer("Отставить спам, погоди пару секунд")
+            return
+
+        # user last action time update
+        self.user_last_action[user_id] = current_time
+        return await handler(event, data)
+        
+        
