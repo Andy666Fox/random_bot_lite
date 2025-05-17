@@ -13,7 +13,7 @@ class BasicMW(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any]) -> Any:
         ####
-        print(f'I Got {data['event_from_user']}')
+        print(f'\nBasicMW Got {data['event_from_user']}')
         ####
         return await handler(event, data)
 
@@ -30,6 +30,9 @@ class CooldownMW(BaseMiddleware):
             data: Dict[str, Any]) -> Any:
         #if F.text != 'Найти канал':
             #return await handler(event, data)
+        ####
+        print(f'\nCooldownMW Got {data['event_from_user']}')
+        ####
 
         # check the user last action time
         user_id = event.from_user.id
