@@ -28,9 +28,9 @@ async def send_welcome(message: types.Message):
 
 @get_channel_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
-    await message.answer(f'{random.choice(ANSWERS)}\n@{rw.get_random_word()}'
-            #reply_markup=types.ReplyKeyboardRemove()
-        )
+    text = f'{random.choice(ANSWERS)}\n@{rw.get_random_word()}'
+    await message.answer(text)
+
     
 @decline_router.message(F.content_type.in_(BLOCKED_CONTENT_TYPES))
 async def handle_blocked_content(message: types.Message):
