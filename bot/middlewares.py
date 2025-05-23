@@ -42,7 +42,7 @@ class CooldownMW(BaseMiddleware):
         last_action = self.user_last_action.get(user_id)
 
         # send warning message if duration less than 3 seconds
-        if last_action and (current_time - last_action) < 3:
+        if last_action and (current_time - last_action) < 2:
             await event.answer("Отставить спам, погоди пару секунд")
             return
 

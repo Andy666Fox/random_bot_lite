@@ -3,8 +3,8 @@ from aiogram.filters.command import Command
 from aiogram import F
 
 from keyboards import get_main_keyboard
-from defaults import *
-from services import rw
+from bot.common.defaults import *
+from datab.channel_handler import get_random_channel
 from middlewares import BasicMW, CooldownMW
 
 import random
@@ -17,7 +17,7 @@ decline_router = Router()
 get_channel_router = Router()
 decline_router.message.middleware(BasicMW())
 get_channel_router.message.middleware(CooldownMW())
-
+channels_list = get_random_channel()
 
 # Initial button handler
 @get_channel_router.message(Command('start'))
@@ -30,7 +30,13 @@ async def send_welcome(message: types.Message):
 # Main button handler
 @get_channel_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
-    text = f'{random.choice(ANSWERS)}\n@{rw.get_random_word()}'
+    if channels_list:
+        ans = channels_list[-1]
+        channels_list.pop(-1)
+    else:
+        channels_list = get_random_channel()
+        
+    text = f'{random.choice(ANSWERS)}\n@{ans}'
     await message.answer(text)
 
 
