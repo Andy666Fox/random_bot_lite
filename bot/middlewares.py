@@ -1,8 +1,10 @@
 from typing import Any, Callable, Dict, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message
-from aiogram import F
+from common.log_handle import BotLoger
 import time
+
+logger = BotLoger()
 
 class BasicMW(BaseMiddleware):
     '''parent middleware, contains basic mw functionality
@@ -13,8 +15,9 @@ class BasicMW(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any]) -> Any:
         ####
-        bmw = data['event_from_user']
-        print(f'\nBasicMW Got {bmw}')
+        uid = str(data['event_from_user']).split()[0][3:]
+        print(f'\nBasicMW Got id={uid}')
+        logger.log_user_event(int(uid), 'CDMW', str(data['event_from_user']))
         ####
         return await handler(event, data)
 
@@ -32,8 +35,9 @@ class CooldownMW(BaseMiddleware):
         #if F.text != 'Найти канал':
             #return await handler(event, data)
         ####
-        cmw = data['event_from_user']
-        print(f'\nCooldownMW Got {cmw}')
+        uid = str(data['event_from_user']).split()[0][3:]
+        print(f'\nCooldownMW Got id={uid}')
+        logger.log_user_event(int(uid), 'CDMW', str(data['event_from_user']))
         ####
 
         # check the user last action time
