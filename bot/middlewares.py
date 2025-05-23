@@ -16,7 +16,6 @@ class BasicMW(BaseMiddleware):
             data: Dict[str, Any]) -> Any:
         ####
         uid = str(data['event_from_user']).split()[0][3:]
-        print(f'\nBasicMW Got id={uid}')
         logger.log_user_event(int(uid), 'CDMW', str(data['event_from_user']))
         ####
         return await handler(event, data)
@@ -36,7 +35,6 @@ class CooldownMW(BaseMiddleware):
             #return await handler(event, data)
         ####
         uid = str(data['event_from_user']).split()[0][3:]
-        print(f'\nCooldownMW Got id={uid}')
         logger.log_user_event(int(uid), 'CDMW', str(data['event_from_user']))
         ####
 
