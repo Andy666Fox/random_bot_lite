@@ -1,10 +1,12 @@
 from aiogram.enums import ContentType
 
-ANSWERS = ['Вот например:', 'А как тебе этот:', 'Что насчет этого:', 'Ну вот собсна:']
+ANSWERS = ["Вот например:", "А как тебе этот:", "Что насчет этого:", "Ну вот собсна:"]
 
-START_MESSAGE = "Добро пожаловать!\n" \
-                "Используйте кнопку ниже для получения канала\n" \
-                "Внимание! Используйте пожалуйста только кнопки"
+START_MESSAGE = (
+    "Добро пожаловать!\n"
+    "Используйте кнопку ниже для получения канала\n"
+    "Внимание! Используйте пожалуйста только кнопки"
+)
 
 MESSAGE_ANSWER = "Не нужно ничего мне отправлять\nЯ не Майкрософт"
 
@@ -22,5 +24,5 @@ BLOCKED_CONTENT_TYPES = [
     ContentType.VOICE,
     ContentType.VIDEO_NOTE,
     ContentType.STICKER,
-    ContentType.ANIMATION
+    ContentType.ANIMATION,
 ]

@@ -5,9 +5,9 @@ from aiogram import Bot, Dispatcher
 from config_reader import config
 from handlers import decline_router, get_channel_router
 
+
 async def main():
-    """Main entry point. Initiate logging, api-keys, routers, history control, polling
-    """
+    """Main entry point. Initiate logging, api-keys, routers, history control, polling"""
     # Standart cmd logging in worktime
     logging.basicConfig(level=logging.INFO)
 

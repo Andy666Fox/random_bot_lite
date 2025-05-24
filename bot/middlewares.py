@@ -6,36 +6,40 @@ import time
 
 logger = BotLoger()
 
+
 class BasicMW(BaseMiddleware):
-    '''parent middleware, contains basic mw functionality
-    '''
+    """parent middleware, contains basic mw functionality"""
+
     async def __call__(
-            self, 
-            handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
-            event: TelegramObject,
-            data: Dict[str, Any]) -> Any:
+        self,
+        handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
+        data: Dict[str, Any],
+    ) -> Any:
         ####
-        uid = str(data['event_from_user']).split()[0][3:]
-        logger.log_user_event(int(uid), 'CDMW', str(data['event_from_user']))
+        uid = str(data["event_from_user"]).split()[0][3:]
+        logger.log_user_event(int(uid), "CDMW", str(data["event_from_user"]))
         ####
         return await handler(event, data)
 
+
 class CooldownMW(BaseMiddleware):
-    ''' Middleware for antispam control
-    '''
+    """Middleware for antispam control"""
+
     def __init__(self):
         self.user_last_action = {}
 
     async def __call__(
-            self,
-            handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-            event: Message,
-            data: Dict[str, Any]) -> Any:
-        #if F.text != 'Найти канал':
-            #return await handler(event, data)
+        self,
+        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
+        event: Message,
+        data: Dict[str, Any],
+    ) -> Any:
+        # if F.text != 'Найти канал':
+        # return await handler(event, data)
         ####
-        uid = str(data['event_from_user']).split()[0][3:]
-        logger.log_user_event(int(uid), 'CDMW', str(data['event_from_user']))
+        uid = str(data["event_from_user"]).split()[0][3:]
+        logger.log_user_event(int(uid), "CDMW", str(data["event_from_user"]))
         ####
 
         # check the user last action time
@@ -51,5 +55,3 @@ class CooldownMW(BaseMiddleware):
         # user last action time update
         self.user_last_action[user_id] = current_time
         return await handler(event, data)
-        
-        

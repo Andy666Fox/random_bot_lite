@@ -6,4 +6,5 @@ class Settings(BaseSettings):
     bot_token: SecretStr
     model_config = SettingsConfigDict(env_file=r"bot\.env")
 
+
 config = Settings()

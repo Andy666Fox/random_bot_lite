@@ -18,18 +18,17 @@ get_channel_router = Router()
 decline_router.message.middleware(BasicMW())
 get_channel_router.message.middleware(CooldownMW())
 
+
 # Initial button handler
-@get_channel_router.message(Command('start'))
+@get_channel_router.message(Command("start"))
 async def send_welcome(message: types.Message):
-    await message.answer(
-        START_MESSAGE,
-        reply_markup=get_main_keyboard()
-    )
+    await message.answer(START_MESSAGE, reply_markup=get_main_keyboard())
+
 
 # Main button handler
 @get_channel_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
-    text = f'{random.choice(ANSWERS)}\n@{get_random_channel()}'
+    text = f"{random.choice(ANSWERS)}\n@{get_random_channel()}"
     await message.answer(text)
 
 
@@ -38,7 +37,7 @@ async def handle_start_button(message: types.Message):
 async def handle_blocked_content(message: types.Message):
     await message.delete()
     await message.answer(MESSAGE_ANSWER)
-    
+
 
 # Invalid text command handler
 @decline_router.message(F.text)
