@@ -1,7 +1,7 @@
 import json  
 from models import Channel, Session
 
-def migrate_from_json(json_path='val_channels.json'):
+def migrate_from_json(json_path='bot/datab/val_channels.json'):
     with open(json_path, 'r') as f:
         data = json.load(f)
 

@@ -1,22 +1,14 @@
 import json
 import random
 from aiogram import types 
-from models import Channel, Session
 from sqlalchemy.sql.expression import func
+from datab.models import Channel, Session
 
 
-async def get_efficient_random(session):
-    return session.query(Channel).order_by(func.random()).limit(1).sclar()
-
-
-async def get_db_random_channel():
+async def get_random_channel():
     with Session() as session:
-        random_channel = Channel.get_random(session)
+        return session.query(Channel).order_by(func.random()).limit(1).scalar().channelnick
 
-        if random_channel:
-            return random_channel.channelnick
-        else:
-            return 'not found'
         
 async def add_channel(message: types.Message):
     channel_nick = message.text.split()[-1]
@@ -44,11 +36,3 @@ async def get_top_channels(limit=10):
         channels = session.query(Channel).order_by(Channel.score.desc()).limit(limit).all()
         return [(ch.channelnick, ch.score) for ch in channels]
 
-
-
-# Deprecated
-def get_random_channel():
-    with open("bot\\datab\\val_channels.json", "r") as file:
-        data = json.load(file)
-
-    return random.choice(list(data.keys()))

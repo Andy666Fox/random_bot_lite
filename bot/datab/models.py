@@ -12,11 +12,6 @@ class Channel(Base):
     channelnick = Column(String(100), unique=True, nullable=False)
     score = Column(Integer, default=0)
 
-    # Deprecated
-    @staticmethod
-    def get_random(session):
-        return session.query(Channel).order_by(func.random()).first()
-
-engine = create_engine('sqlite:///channels.db')
+engine = create_engine('sqlite:///bot/datab/channels.db')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)

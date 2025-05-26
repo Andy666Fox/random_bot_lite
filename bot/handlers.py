@@ -4,8 +4,9 @@ from aiogram import F
 
 from keyboards import get_main_keyboard
 from common.defaults import *
-from datab.channel_handler import get_random_channel
 from middlewares import BasicMW, CooldownMW
+from datab.crud import *
+from datab.models import Session
 
 import random
 
@@ -28,7 +29,8 @@ async def send_welcome(message: types.Message):
 # Main button handler
 @get_channel_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
-    text = f"{random.choice(ANSWERS)}\n@{get_random_channel()}"
+    channel = await get_random_channel()
+    text = f"{random.choice(ANSWERS)}\n@{channel}" #get_random_channel()
     await message.answer(text)
 
 
