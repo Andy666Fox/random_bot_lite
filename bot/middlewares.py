@@ -18,8 +18,10 @@ class BasicMW(BaseMiddleware):
     ) -> Any:
         ####
         uid = str(data["event_from_user"]).split()[0][3:]
-        logger.log_user_event(int(uid), f"{handler.__name__}", str(data["event_from_user"]).split(' ')[4])
-        #print(data)
+        logger.log_user_event(
+            int(uid), f"{handler.__name__}", str(data["event_from_user"]).split(" ")[4]
+        )
+        # print(data)
         ####
         return await handler(event, data)
 
@@ -40,7 +42,9 @@ class CooldownMW(BaseMiddleware):
         # return await handler(event, data)
         ####
         uid = str(data["event_from_user"]).split()[0][3:]
-        logger.log_user_event(int(uid), f"{handler.__name__}", str(data["event_from_user"]).split(' ')[4])
+        logger.log_user_event(
+            int(uid), f"{handler.__name__}", str(data["event_from_user"]).split(" ")[4]
+        )
         ####
 
         # check the user last action time

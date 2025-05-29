@@ -37,7 +37,7 @@ class BotLoger:
                 "data": data,
             }
         )
-    
+
     def log_db_interaction(self, user_id: int, event_type: str, data):
         pass
 

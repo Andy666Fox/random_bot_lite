@@ -5,13 +5,15 @@ from sqlalchemy import func
 
 Base = declarative_base()
 
+
 class Channel(Base):
-    __tablename__ = 'channels'
+    __tablename__ = "channels"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     channelnick = Column(String(100), unique=True, nullable=False)
     score = Column(Integer, default=0)
 
-engine = create_engine('sqlite:///bot/datab/channels.db')
+
+engine = create_engine("sqlite:///bot/datab/channels.db")
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)

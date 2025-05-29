@@ -30,7 +30,7 @@ async def send_welcome(message: types.Message):
 @get_channel_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
     channel = await get_random_channel()
-    text = f"{random.choice(ANSWERS)}\n@{channel}" #get_random_channel()
+    text = f"{random.choice(ANSWERS)}\n@{channel}"  # get_random_channel()
     await message.answer(text)
 
 
