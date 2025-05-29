@@ -35,9 +35,11 @@ class BotLoger:
                 "user_id": user_id,
                 "event_type": event_type,
                 "data": data,
-                "timestamp": datetime.utcnow().isoformat(),
             }
         )
+    
+    def log_db_interaction(self, user_id: int, event_type: str, data):
+        pass
 
     def log_error(self, error: Exception, context: dict = None):
         self.logger.error(
