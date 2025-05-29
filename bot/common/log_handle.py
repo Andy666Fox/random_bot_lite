@@ -33,13 +33,13 @@ class BotLoger:
         self.logger.info(
             {
                 "user_id": user_id,
-                "event_type": event_type,
+                "event_type": event_type,       
                 "data": data,
             }
         )
 
     def log_db_interaction(self, user_id: int, event_type: str, data):
-        pass
+        pass    
 
     def log_error(self, error: Exception, context: dict = None):
         self.logger.error(

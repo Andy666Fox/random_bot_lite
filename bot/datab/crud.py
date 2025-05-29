@@ -1,5 +1,3 @@
-import json
-import random
 from aiogram import types
 from sqlalchemy.sql.expression import func
 from datab.models import Channel, Session
