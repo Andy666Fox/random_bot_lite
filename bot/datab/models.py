@@ -7,6 +7,7 @@ Base = declarative_base()
 
 
 class Channel(Base):
+    # Basic db schema, conatain info about, id, channel nickname and channel score (in development)
     __tablename__ = "channels"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

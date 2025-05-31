@@ -2,6 +2,7 @@ import json
 from models import Channel, Session
 
 
+# script for migrate data from json file to sqlite database
 def migrate_from_json(json_path="bot/datab/val_channels.json"):
     with open(json_path, "r") as f:
         data = json.load(f)
