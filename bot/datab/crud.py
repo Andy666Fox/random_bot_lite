@@ -4,6 +4,8 @@ from datab.models import Channel, Session
 
 
 async def get_random_channel():
+    """main handler
+    """
     with Session() as session:
         return (
             session.query(Channel).order_by(func.random()).limit(1).scalar().channelnick
@@ -31,11 +33,3 @@ async def increment_score(channel_nick: str):
             session.commit()
             return True
         return False
-
-
-async def get_top_channels(limit=10):
-    with Session() as session:
-        channels = (
-            session.query(Channel).order_by(Channel.score.desc()).limit(limit).all()
-        )
-        return [(ch.channelnick, ch.score) for ch in channels]
