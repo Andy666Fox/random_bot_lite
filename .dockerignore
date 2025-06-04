@@ -5,3 +5,4 @@ __pycache__
 Dockerfile
 README.md
 validated_channels
+bot\datab\channels.db

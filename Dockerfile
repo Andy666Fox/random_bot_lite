@@ -15,6 +15,9 @@ COPY requirements.txt .
 #RUN pip freeze > requirements.txt
 RUN uv pip install -r requirements.txt 
 COPY . .
+COPY bot\datab\channels.db bot\datab\channels.db
+
+VOLUME bot\datab
 
 CMD ["uv", "run", "python",  "bot/main.py"]
 
