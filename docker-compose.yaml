@@ -1,6 +1,8 @@
+version: '2'
 services:
   bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
-      - "bot/.env"
-    build: .
-    container_name: "bot-backend"
+      - .env

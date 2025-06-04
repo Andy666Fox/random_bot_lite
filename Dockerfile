@@ -1,18 +1,23 @@
-FROM python:3.10-alpine
+FROM python:3.10-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
+    build-essential libffi-dev curl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+ENV PATH="/root/.local/bin/:$PATH"
+RUN uv venv /app/.venv
 
 WORKDIR /app 
 
 COPY requirements.txt .
 
 #RUN pip freeze > requirements.txt
-RUN pip install -r requirements.txt 
-
+RUN uv pip install -r requirements.txt 
 COPY . .
 
-CMD ["python", "bot/main.py"]
+CMD ["uv", "run", "python",  "bot/main.py"]
 
-# uv pip freeze > requirements.txt
-# docker build -t tgrandombot:latest .
-# docker container prune (y)
-# docker rmi -f tgrandombot
-# 
+#docker image prune -y
+#docker container prune -y
+#docker compose up -d --build
