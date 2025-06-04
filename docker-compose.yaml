@@ -1,0 +1,6 @@
+services:
+  bot:
+    env_file:
+      - "bot/.env"
+    build: .
+    container_name: "bot-backend"
