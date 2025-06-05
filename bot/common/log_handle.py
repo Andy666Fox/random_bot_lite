@@ -3,7 +3,7 @@ from logging.handlers import RotatingFileHandler
 import json
 from datetime import datetime
 
-
+#basic logger class
 class BotLoger:
     def __init__(self, log_file="bot.log"):
         self.logger = logging.getLogger("TGRandombot")
