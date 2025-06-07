@@ -9,3 +9,4 @@
 ## 🛠 Stack
 - ### Core: Python 3.11+
 - ### Framework: aiogram 3.x (Async)
+- ### DevOPS: VirtualBox -> Ansible -> GihubCI -> Prometheus -> GRafana -> Loki
