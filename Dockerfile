@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN uv pip install -r requirements.txt 
 COPY . .
 
-VOLUME bot\datab\db
+VOLUME /bot/datab/db
 
 CMD ["uv", "run", "python",  "bot/main.py"]
 
