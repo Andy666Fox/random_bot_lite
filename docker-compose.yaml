@@ -1,5 +1,6 @@
 services:
   bot:
+    container_name: 'TGRBot_instance'
     build:
       context: .
       dockerfile: Dockerfile
