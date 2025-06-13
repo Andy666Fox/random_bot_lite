@@ -14,7 +14,7 @@ class Channel(Base):
     channelnick = Column(String(100), unique=True, nullable=False)
     score = Column(Integer, default=0)
 
-
+#TODO replace sqlite to Postgres
 engine = create_engine("sqlite:///bot/datab/db/channels.db")
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
