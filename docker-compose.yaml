@@ -7,5 +7,5 @@ services:
     env_file:
       - .env
     volumes:
-      - /bot/datab/db: /app/bot/datab/db 
-      - /logs: /app/logs
+    - /bot/datab/db:/app/datab/db
+    - /bot/logs:/app/logs
