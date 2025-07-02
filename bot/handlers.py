@@ -12,7 +12,7 @@ import random
 
 # bot have two types of routers
 # DECLINE routers react for invalid messages (message types)
-# GET_CHannel normal work router. Control message sending from bot
+# GET_Channel normal work router. Control message sending from bot
 
 decline_router = Router()
 get_channel_router = Router()
