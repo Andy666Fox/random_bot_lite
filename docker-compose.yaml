@@ -8,6 +8,11 @@ services:
       - .env
     networks:
       - database
+    depends_on:
+      - postgres
+
+
+
   postgres:
     container_name: postgres
     image: postgres:14
@@ -16,7 +21,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-     - ./datab/db:./app/datab/db
+     - datab:/app/datab/
     ports:
     - "5432:5432"
     healthcheck:
@@ -30,7 +35,7 @@ services:
       - database
 
 volumes:
-  db:
+  datab:
 
 networks:
   database:

@@ -23,4 +23,4 @@ class User(Base):
 engine = create_async_engine(db_url,
                             echo=True, future=True)
 
-Base.metadata.create_all(engine)
+#Base.metadata.create_all(engine)
