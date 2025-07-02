@@ -5,6 +5,8 @@ import string
 import argparse
 
 
+#cd ./random_bot_lite/bot
+#uv run python common/check_channels.py -p ../raw_data/raw_channels.json -l 1000 -r 1020
 def load_channles(filename):
     with open(filename, "r", encoding="utf-8") as f:
         return json.load(f)

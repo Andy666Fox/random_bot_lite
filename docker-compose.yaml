@@ -6,6 +6,32 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    networks:
+      - database
+  postgres:
+    container_name: postgres
+    image: postgres:14
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-    - /bot/datab/db:/app/datab/db
-    - /bot/logs:/app/logs
+     - ./datab/db:./app/datab/db
+    ports:
+    - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - database
+
+volumes:
+  db:
+
+networks:
+  database:
+    driver: bridge
