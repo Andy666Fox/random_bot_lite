@@ -15,10 +15,9 @@ def check_channels_exists(channel_key):
 
     try:
         response = requests.get(url, timeout=10)
-        # response.raise_for_status()
 
         print(response.status_code)
-        if 'class="tgme_page_extra"' in response.text.lower():
+        if 'class="tgme_page_context_link"' in response.text.lower():
             return True
         return False
 
@@ -46,7 +45,7 @@ def clean_channels(filename, l, r):
         else:
             print(f"Channel does not exist, refund: {channel_key}")
 
-    with open(f"validated_channels\{l}_{r}_check.json", "w", encoding="utf-8") as f:
+    with open(f"../validated_channels/{l}_{r}_check.json", "w", encoding="utf-8") as f:
         json.dump(valid_channels, f, indent=4, ensure_ascii=False)
 
 
