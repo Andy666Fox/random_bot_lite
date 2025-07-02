@@ -5,8 +5,8 @@ from aiogram import F
 from keyboards import get_main_keyboard
 from common.defaults import *
 from middlewares import BasicMW, CooldownMW
-from datab.crud import *
-from datab.models import Session
+from bot.crud import *
+from bot.models import Session
 
 import random
 

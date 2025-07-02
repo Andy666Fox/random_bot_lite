@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher
+import os
 
 from config_reader import config
 from handlers import decline_router, get_channel_router
@@ -12,7 +13,7 @@ async def main():
     logging.basicConfig(level=logging.INFO)
 
     # bot instance
-    bot = Bot(token=config.bot_token.get_secret_value())
+    bot = Bot(token=os.getenv("BOT_TOKEN"))
     # main router (dispatcher) instance
     dp = Dispatcher()
 
