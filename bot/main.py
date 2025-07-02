@@ -3,8 +3,11 @@ import logging
 from aiogram import Bot, Dispatcher
 import os
 
-from config_reader import config
+#from config_reader import config
 from handlers import decline_router, get_channel_router
+
+from dotenv import load_dotenv
+load_dotenv()
 
 
 async def main():

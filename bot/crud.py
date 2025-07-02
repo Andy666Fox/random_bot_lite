@@ -1,5 +1,5 @@
 from sqlalchemy.sql.expression import func
-from models import Channel, Session
+from models import Channel
 from database import get_session
 
 
