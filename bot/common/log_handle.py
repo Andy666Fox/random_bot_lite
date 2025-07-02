@@ -3,7 +3,8 @@ from logging.handlers import RotatingFileHandler
 import json
 from datetime import datetime
 
-#basic logger class
+
+# basic logger class
 class BotLoger:
     def __init__(self, log_file="bot.log"):
         self.logger = logging.getLogger("TGRandombot")
@@ -33,13 +34,13 @@ class BotLoger:
         self.logger.info(
             {
                 "user_id": user_id,
-                "event_type": event_type,       
+                "event_type": event_type,
                 "data": data,
             }
         )
 
     def log_db_interaction(self, user_id: int, event_type: str, data):
-        pass    
+        pass
 
     def log_error(self, error: Exception, context: dict = None):
         self.logger.error(
