@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 Base = declarative_base()
-db_url = f'postgresql+asyncpg://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@5432:5432/{os.getenv("POSTGRES_DB")}'
+db_url = f'postgresql+asyncpg://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres:5432/{os.getenv("POSTGRES_DB")}'
 
 class Channel(Base):
     # Basic db schema, conatain info about, id, channel nickname and channel score (in development)
@@ -23,4 +23,6 @@ class User(Base):
 engine = create_async_engine(db_url,
                             echo=True, future=True)
 
-#Base.metadata.create_all(engine)
+async def create_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

@@ -1,8 +1,12 @@
 *.pyc
 *.env
+*.venv
 .git
 __pycache__
 Dockerfile
 README.md
 validated_channels
 logs
+docker-compose.yaml
+raw_data
+uv.lock
