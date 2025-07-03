@@ -14,4 +14,3 @@ logs
 *.env
 raw_data/
 validated_channels/
-bot/datab/val_channels.json
