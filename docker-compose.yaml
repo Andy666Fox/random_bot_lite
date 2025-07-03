@@ -22,8 +22,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /data/datab
     volumes:
-     - datab:/data/datab
-     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+     - datab:/var/lib/postgresql/data
     ports:
     - "5432:5432"
     healthcheck:

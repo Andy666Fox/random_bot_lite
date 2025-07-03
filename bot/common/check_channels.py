@@ -3,6 +3,7 @@ import json
 from time import sleep
 import string
 import argparse
+from tqdm import tqdm
 
 
 #cd ./random_bot_lite/bot
@@ -32,7 +33,7 @@ def clean_channels(filename, l, r):
     channels = load_channles(filename)
     print(f"Validate from {l} to {r}")
     valid_channels = {}
-    for channel_key in list(channels.keys())[l:r]:
+    for channel_key in tqdm(list(channels.keys())[l:r]):
         print(f"Check for {channel_key}...")
         if len(channel_key) > 32:
             print(f"To much long name, refund: {channel_key}")
