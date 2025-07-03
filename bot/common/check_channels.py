@@ -47,7 +47,7 @@ def clean_channels(filename, l, r):
         else:
             print(f"Channel does not exist, refund: {channel_key}")
 
-    with open(f"../validated_channels/{l}_{r}_check.json", "w", encoding="utf-8") as f:
+    with open(f"validated_channels/{l}_{r}_check.json", "w", encoding="utf-8") as f:
         json.dump(valid_channels, f, indent=4, ensure_ascii=False)
 
 

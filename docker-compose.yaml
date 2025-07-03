@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    command: sh -c "uv run python /app/bot/db_data/migrator.py"
     networks:
       - database
     depends_on:
@@ -21,8 +20,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/datab
     volumes:
-     - datab:/app/datab/
+     - datab:/data/datab
+     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
     - "5432:5432"
     healthcheck:
