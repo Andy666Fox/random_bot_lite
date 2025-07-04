@@ -5,7 +5,7 @@ from aiogram import F
 from keyboards import get_main_keyboard
 from defaults import *
 from middlewares import BasicMW, CooldownMW
-from database.crud import *
+from crud import *
 
 import random
 

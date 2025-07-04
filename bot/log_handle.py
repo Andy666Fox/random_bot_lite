@@ -6,7 +6,7 @@ from datetime import datetime
 
 # basic logger class
 class BotLoger:
-    def __init__(self, log_file="bot.log"):
+    def __init__(self, log_file="./bot/logs/bot.log"):
         self.logger = logging.getLogger("TGRandombot")
         self.logger.setLevel(logging.DEBUG)
 

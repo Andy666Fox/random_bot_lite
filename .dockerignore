@@ -7,4 +7,5 @@ __pycache__
 Dockerfile
 README.md
 docker-compose.yaml
+common
 uv.lock

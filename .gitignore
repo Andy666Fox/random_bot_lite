@@ -8,6 +8,7 @@ wheels/
 *words.json
 *.log
 logs
+common
 
 # Virtual environments
 .venv
