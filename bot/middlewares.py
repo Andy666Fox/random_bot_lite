@@ -1,7 +1,7 @@
 from typing import Any, Callable, Dict, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message
-from bot.log_handle import BotLoger
+from log_handle import BotLoger
 import time
 
 logger = BotLoger()
