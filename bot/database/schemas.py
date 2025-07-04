@@ -12,6 +12,7 @@ class Channel(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     channelnick = Column(String(100), unique=True, nullable=False)
+    channel_status = Column(Integer, nullable=False)
 
 class User(Base):
     __tablename__ = "users"

@@ -5,7 +5,7 @@ import os
 
 #from config_reader import config
 from handlers import decline_router, get_channel_router
-from database.models import create_tables
+from database.schemas import create_tables
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,7 +14,7 @@ async def main():
     """Main entry point. Initiate logging, api-keys, routers, history control, polling"""
     # Standart cmd logging in worktime
     logging.basicConfig(level=logging.INFO)
-    await create_tables()
+    #await create_tables()
 
     # bot instance
     bot = Bot(token=os.getenv("BOT_TOKEN"))

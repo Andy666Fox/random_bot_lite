@@ -1,4 +1,4 @@
-from models import engine
+from database.schemas import engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from contextlib import asynccontextmanager

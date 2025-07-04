@@ -12,5 +12,3 @@ logs
 # Virtual environments
 .venv
 *.env
-raw_data/
-validated_channels/
