@@ -3,8 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from contextlib import asynccontextmanager
 
+
 def async_session_generator():
     return sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
 
 @asynccontextmanager
 async def get_session():
