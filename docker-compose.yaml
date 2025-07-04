@@ -4,14 +4,24 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - BOT_TOKEN=${BOT_TOKEN}
     networks:
       - database
+    restart: unless-stopped
     depends_on:
-      - postgres
-
-
+      postgres:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   postgres:
     container_name: ${DB_CONTAINER_NAME}
@@ -20,11 +30,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: /data/datab
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-     - datab:/var/lib/postgresql/data
-    ports:
-    - "5432:5432"
+     - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -34,9 +42,15 @@ services:
     restart: unless-stopped
     networks:
       - database
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
-  datab:
+  postgres_data:
+    driver: local
 
 networks:
   database:

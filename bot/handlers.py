@@ -3,7 +3,7 @@ from aiogram.filters.command import Command
 from aiogram import F
 
 from keyboards import get_main_keyboard
-from bot.defaults import *
+from defaults import *
 from middlewares import BasicMW, CooldownMW
 from database.crud import *
 
