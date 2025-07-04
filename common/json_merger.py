@@ -57,4 +57,4 @@ def merge_json_folder(input_dir, output_file):
             print(f" - {fn}")
 
 
-merge_json_folder("validated_channels", "new_words.json")
+merge_json_folder("validated_channels", "val_channels.json")
