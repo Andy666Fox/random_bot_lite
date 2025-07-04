@@ -5,7 +5,7 @@ import os
 
 #from config_reader import config
 from handlers import decline_router, get_channel_router
-from models import create_tables
+from database.models import create_tables
 from dotenv import load_dotenv
 load_dotenv()
 
