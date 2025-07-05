@@ -26,7 +26,7 @@ class User(Base):
     username = Column(String(100), unique=True, nullable=False)
 
 
-engine = create_async_engine(db_url, echo=True, future=True)
+engine = create_async_engine(db_url, echo=False, future=True)
 
 
 async def create_tables():

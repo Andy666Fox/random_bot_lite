@@ -9,6 +9,7 @@ wheels/
 *.log
 logs
 common
+tgrbot_infrastructure.drawio
 
 # Virtual environments
 .venv
