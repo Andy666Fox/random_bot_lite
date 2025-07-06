@@ -10,6 +10,7 @@ wheels/
 logs
 common
 tgrbot_infrastructure.drawio
+*.lock
 
 # Virtual environments
 .venv
