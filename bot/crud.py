@@ -1,6 +1,5 @@
 from sqlalchemy.sql.expression import func
-from sqlalchemy import select, insert
-from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy import select
 import asyncpg
 from schemas import Channel, db_url
 from session_gen import get_session
@@ -70,7 +69,7 @@ async def insert_channels_from_csv(csv_file_path: str, batch_size=500):
             try:
                 await conn.execute(query, *params)
                 inserted_count += len(batch)
-                pbar.update(len(batch))  # Обновляем прогресс-бар
+                pbar.update(len(batch))
             except Exception as e:
                 print(f"\nОшибка при вставке пакета {i}-{i+len(batch)}: {str(e)}")
 
