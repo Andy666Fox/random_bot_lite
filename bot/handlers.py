@@ -3,7 +3,13 @@ from aiogram.filters.command import Command
 from aiogram import F
 
 from keyboards import get_main_keyboard
-from defaults import START_MESSAGE, ANSWERS, BLOCKED_CONTENT_TYPES, MESSAGE_ANSWER, DEFAULT_RESPONSE
+from defaults import (
+    START_MESSAGE,
+    ANSWERS,
+    BLOCKED_CONTENT_TYPES,
+    MESSAGE_ANSWER,
+    DEFAULT_RESPONSE,
+)
 from middlewares import BasicMW, CooldownMW
 from crud import get_random_channel
 

@@ -58,12 +58,12 @@ async def insert_channels_from_csv(csv_file_path: str, batch_size=500):
 
             for idx, (nick, status) in enumerate(batch, start=1):
                 base_idx = idx * 2 - 1
-                values.append(f"(${base_idx}::VARCHAR, ${base_idx+1}::INTEGER)")
+                values.append(f"(${base_idx}::VARCHAR, ${base_idx + 1}::INTEGER)")
                 params.extend([nick, status])
 
             query = f"""
                 INSERT INTO channels (channelnick, channel_status)
-                VALUES {','.join(values)}
+                VALUES {",".join(values)}
                 """
 
             try:
@@ -71,7 +71,7 @@ async def insert_channels_from_csv(csv_file_path: str, batch_size=500):
                 inserted_count += len(batch)
                 pbar.update(len(batch))
             except Exception as e:
-                print(f"\nОшибка при вставке пакета {i}-{i+len(batch)}: {str(e)}")
+                print(f"\nОшибка при вставке пакета {i}-{i + len(batch)}: {str(e)}")
 
     await conn.close()
     print(f"Success: {inserted_count} rows inserted")

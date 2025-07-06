@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 Base = declarative_base()
-db_url = f'postgresql+asyncpg://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres_tgrb:5432/{os.getenv("POSTGRES_DB")}'
+db_url = f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@postgres_tgrb:5432/{os.getenv('POSTGRES_DB')}"
 
 
 class Channel(Base):
