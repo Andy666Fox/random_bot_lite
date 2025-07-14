@@ -11,6 +11,7 @@ logs
 common
 tgrbot_infrastructure.drawio
 *.lock
+*.ruff_cache
 
 # Virtual environments
 .venv
