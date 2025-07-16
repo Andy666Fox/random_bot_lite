@@ -1,4 +1,3 @@
-
 """
 Database operations module for channel management.
 
@@ -25,14 +24,14 @@ from tqdm import tqdm
 async def get_random_channel():
     """
     Retrieve a random active channel nickname from the database.
-    
+
     This function uses a two-step approach:
     1. Count total active channels (channel_status = 1)
     2. Use random offset to select one channel
-    
+
     Returns:
         Optional[str]: Channel nickname if found, None if no active channels exist
-        
+
     Raises:
         Exception: Database connection or query errors are caught and logged
     """
@@ -67,18 +66,18 @@ async def get_random_channel():
 async def insert_channels_from_csv(csv_file_path: str, batch_size=500):
     """
     Bulk import channel data from CSV file using high-performance asyncpg.
-    
+
     This function provides:
     - Batch processing to optimize memory usage and database performance
     - Progress tracking with tqdm
     - Error handling for individual batches
     - Direct asyncpg connection for maximum insertion speed
-    
+
     Args:
         csv_file_path (str): Path to the CSV file containing channel data
-        batch_size (int, optional): Number of records to insert per batch. 
+        batch_size (int, optional): Number of records to insert per batch.
                                   Default 500. Adjust based on available memory.
-    
+
     Raises:
         FileNotFoundError: If CSV file doesn't exist
         asyncpg.PostgresError: For database-specific errors
