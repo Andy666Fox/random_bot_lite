@@ -1,6 +1,6 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-
+# basic keyboard
 def get_main_keyboard():
     builder = ReplyKeyboardBuilder()
     builder.button(text="Найти канал")
