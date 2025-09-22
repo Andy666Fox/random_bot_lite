@@ -12,13 +12,10 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-#RUN pip freeze > requirements.txt
 RUN uv pip install --no-cache-dir -r requirements.txt 
 COPY . .
 
 CMD ["uv", "run", "python",  "bot/main.py"]
 
-#docker image prune -y
-#docker container prune -y
-#docker compose up -d --build
+
 
