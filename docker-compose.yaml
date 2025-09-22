@@ -8,11 +8,10 @@ services:
       - .env
     environment:
       DB_HOST: ${DB_CONTAINER_NAME}
-      DB_PORT: 5432
+      DB_PORT: ${POSTGRES_DB_PORT}
       DB_NAME: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-    #command: uv run python bot/migrator.py
     networks:
       - database
     restart: unless-stopped
@@ -36,7 +35,7 @@ services:
     env_file:
       - .env
     ports:
-     - "19111:5432"
+     - "19111:${POSTGRES_DB_PORT}"
     volumes:
      - postgres_data:/var/lib/postgresql/data
     healthcheck:
