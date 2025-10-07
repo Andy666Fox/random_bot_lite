@@ -18,13 +18,13 @@ RUN uv pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN chown -R tgrbservice:tgrbgroup /app
+RUN chown -R tgrbservice:tgrbgroup /app/bot
 
 RUN chmod -R 755 /app
 
 USER tgrbservice
 
-CMD ["sudo", "uv", "run", "python",  "bot/main.py"]
+CMD ["uv", "run", "python",  "bot/main.py"]
 
 
 
