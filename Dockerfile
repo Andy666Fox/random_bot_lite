@@ -6,28 +6,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
 RUN sh /uv-installer.sh && rm /uv-installer.sh
 ENV PATH="/root/.local/bin/:$PATH"
-
-RUN groupadd -r tgrbgroup && \
-    useradd -r -g tgrbgroup -d /app -s /bin/bash tgrbservice
+RUN uv venv /app/.venv
 
 WORKDIR /app 
 
-RUN uv venv /app/.venv
-
 COPY requirements.txt .
-RUN chown tgrbservice:tgrbgroup requirements.txt
-
-USER tgrbservice
 
 RUN uv pip install --no-cache-dir -r requirements.txt 
 
-USER root
-
 COPY . .
-
-RUN chown -R tgrbservice:tgrbgroup /app
-
-USER tgrbservice
 
 CMD ["uv", "run", "python",  "bot/main.py"]
 
