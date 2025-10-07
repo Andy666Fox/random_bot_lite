@@ -20,8 +20,6 @@ COPY . .
 
 RUN chown -R tgrbservice:tgrbgroup /app/bot
 
-RUN chmod -R 755 /app
-
 USER tgrbservice
 
 CMD ["uv", "run", "python",  "bot/main.py"]
