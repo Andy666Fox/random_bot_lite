@@ -36,7 +36,6 @@ async def send_welcome(message: types.Message):
 async def handle_start_button(message: types.Message):
     channel = await get_random_channel()
     text = f"{random.choice(ANSWERS)}\n@{channel}"
-    await message.delete()
     await message.answer(text)
 
 
