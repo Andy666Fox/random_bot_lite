@@ -11,7 +11,7 @@ RUN uv venv /app/.venv
 WORKDIR /app 
 
 COPY requirements.txt .
-
+RUN mkdir -p /app/logs /app/data
 RUN uv pip install --no-cache-dir -r requirements.txt 
 COPY . .
 

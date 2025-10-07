@@ -6,57 +6,17 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    environment:
-      DB_HOST: ${DB_CONTAINER_NAME}
-      DB_PORT: ${POSTGRES_DB_PORT}
-      DB_NAME: ${POSTGRES_DB}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - database
+      - tgrbot_network
     restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  postgres:
-    container_name: ${DB_CONTAINER_NAME}
-    image: postgres:14
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: /var/lib/postgresql/data/pgdata
-    env_file:
-      - .env
-    ports:
-     - "19111:${POSTGRES_DB_PORT}"
     volumes:
-     - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    restart: unless-stopped
-    networks:
-      - database
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+      - ./bot/logs:/app/logs
+      - ./bot/data:/app/data
 
 volumes:
   postgres_data:
     driver: local
 
 networks:
-  database:
+  tgrbot_network:
     driver: bridge
