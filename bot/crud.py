@@ -3,8 +3,6 @@ from sqlalchemy import select
 from schemas import Channel
 from session_gen import get_session
 import random
-import csv
-from tqdm import tqdm
 
 
 async def get_random_channel():

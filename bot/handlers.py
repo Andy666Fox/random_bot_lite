@@ -8,7 +8,6 @@ from defaults import (
     START_MESSAGE,
     ANSWER_TO_MEDIA,
     ANSWER_TO_WRONG_TEXT,
-    ANSWER_TO_FLOOD,
     BLOCKED_CONTENT_TYPES
 )
 from middlewares import CooldownMW
@@ -36,7 +35,8 @@ async def send_welcome(message: types.Message):
 @get_channel_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
     channel = await get_random_channel()
-    text = f"{random.choice(ANSWERS)}\n@{channel}"  # get_random_channel()
+    text = f"{random.choice(ANSWERS)}\n@{channel}"
+    await message.delete()
     await message.answer(text)
 
 

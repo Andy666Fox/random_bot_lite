@@ -18,7 +18,6 @@ class CooldownMW(BaseMiddleware):
         current_time = time.time()
 
         logger.log_user_event(user_id, handler.__name__, event.from_user.username)
-
         last_action = self.user_last_action.get(user_id)
         if last_action and (current_time - last_action) < self.cooldown:
             await event.answer(ANSWER_TO_FLOOD)

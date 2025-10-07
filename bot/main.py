@@ -1,9 +1,7 @@
 import asyncio
-import logging
 from aiogram import Bot, Dispatcher
 import os
 
-# from config_reader import config
 from handlers import decline_router, get_channel_router
 from schemas import create_tables
 from dotenv import load_dotenv
@@ -16,7 +14,7 @@ async def main():
     """Main entry point. Initiate logging, api-keys, routers, history control, polling"""
     # Setup standard logging for console output
     # INFO level allows seeing main bot operation events
-    logging.basicConfig(level=logging.INFO)
+    #logging.basicConfig(level=logging.INFO)
 
     # Create database tables (if they don't exist yet)
     await create_tables()

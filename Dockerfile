@@ -8,12 +8,21 @@ RUN sh /uv-installer.sh && rm /uv-installer.sh
 ENV PATH="/root/.local/bin/:$PATH"
 RUN uv venv /app/.venv
 
+RUN groupadd -r tgrbgroup && \
+    useradd -r -g tgrbgroup -d /app -s /bin/bash tgrbservice
+
 WORKDIR /app 
 
 COPY requirements.txt .
-RUN mkdir -p /app/logs /app/data
 RUN uv pip install --no-cache-dir -r requirements.txt 
+
 COPY . .
+
+RUN chown -R tgrbservice:tgrbgroup /app
+
+RUN chmod -R 755 /app
+
+USER tgrbservice
 
 CMD ["uv", "run", "python",  "bot/main.py"]
 

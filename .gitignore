@@ -5,11 +5,9 @@ build/
 dist/
 wheels/
 *.egg-info
-*words.json
 *.log
 logs
 common
-tgrbot_infrastructure.drawio
 *.lock
 *.ruff_cache
 

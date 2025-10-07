@@ -10,8 +10,8 @@ services:
       - tgrbot_network
     restart: unless-stopped
     volumes:
-      - ./bot/logs:/app/logs
-      - ./bot/data:/app/data
+      - ./bot/logs:/app/bot/logs
+      - ./bot/data:/app/bot/data
 
 volumes:
   postgres_data:

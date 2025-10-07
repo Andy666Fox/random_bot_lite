@@ -3,9 +3,11 @@
 *.venv
 .git
 .gitignore
+.dockerignore
+*.lock
 __pycache__
 Dockerfile
+pyproject.toml
 README.md
 docker-compose.yaml
 common
-uv.lock
