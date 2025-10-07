@@ -24,7 +24,7 @@ RUN chmod -R 755 /app
 
 USER tgrbservice
 
-CMD ["uv", "run", "python",  "bot/main.py"]
+CMD ["sudo", "uv", "run", "python",  "bot/main.py"]
 
 
 
