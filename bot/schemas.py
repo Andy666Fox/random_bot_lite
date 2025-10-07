@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 Base = declarative_base()
-db_url = f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@postgres_tgrb:5432/{os.getenv('POSTGRES_DB')}"
 
 
 class Channel(Base):
@@ -26,7 +25,7 @@ class User(Base):
     username = Column(String(100), unique=True, nullable=False)
 
 
-engine = create_async_engine(db_url, echo=False, future=True)
+engine = create_async_engine(os.getenv("BOT_DB_URL"), echo=False, future=True)
 
 
 async def create_tables():

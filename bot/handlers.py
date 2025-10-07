@@ -10,7 +10,7 @@ from defaults import (
     MESSAGE_ANSWER,
     DEFAULT_RESPONSE,
 )
-from middlewares import BasicMW, CooldownMW
+from middlewares import CooldownMW
 from crud import get_random_channel
 
 import random
@@ -21,7 +21,7 @@ import random
 
 decline_router = Router()
 get_channel_router = Router()
-decline_router.message.middleware(BasicMW())
+decline_router.message.middleware(CooldownMW())
 get_channel_router.message.middleware(CooldownMW())
 
 
