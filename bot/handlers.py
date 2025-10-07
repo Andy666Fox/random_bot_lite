@@ -4,11 +4,12 @@ from aiogram import F
 
 from keyboards import get_main_keyboard
 from defaults import (
-    START_MESSAGE,
     ANSWERS,
-    BLOCKED_CONTENT_TYPES,
-    MESSAGE_ANSWER,
-    DEFAULT_RESPONSE,
+    START_MESSAGE,
+    ANSWER_TO_MEDIA,
+    ANSWER_TO_WRONG_TEXT,
+    ANSWER_TO_FLOOD,
+    BLOCKED_CONTENT_TYPES
 )
 from middlewares import CooldownMW
 from crud import get_random_channel
@@ -43,11 +44,11 @@ async def handle_start_button(message: types.Message):
 @decline_router.message(F.content_type.in_(BLOCKED_CONTENT_TYPES))
 async def handle_blocked_content(message: types.Message):
     await message.delete()
-    await message.answer(MESSAGE_ANSWER)
+    await message.answer(ANSWER_TO_MEDIA)
 
 
 # Invalid text command handler
 @decline_router.message(F.text)
 async def default_response(message: types.Message):
-    await message.answer(DEFAULT_RESPONSE)
+    await message.answer(ANSWER_TO_WRONG_TEXT)
     await message.delete()
