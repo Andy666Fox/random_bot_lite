@@ -8,6 +8,8 @@ services:
       - .env
     networks:
       - tgrbot_network
+    ports:
+      - "${METRICS_PORT}:${METRICS_PORT"
     restart: unless-stopped
     volumes:
       - ./bot/logs:/app/bot/logs

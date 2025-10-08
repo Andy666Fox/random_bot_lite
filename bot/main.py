@@ -5,6 +5,7 @@ import os
 from handlers import decline_router, get_channel_router
 from schemas import create_tables
 from dotenv import load_dotenv
+from monitoring.metrics_server import run_metrics_server
 
 # Load environment variables from .env file
 load_dotenv()
@@ -29,6 +30,8 @@ async def main():
     # - decline_router: handles rejections or declines
     dp.include_routers(get_channel_router, decline_router)
 
+    metrics_task = asyncio.create_task(run_metrics_server())
+
     # ignore previos messages from users
     await bot.delete_webhook(drop_pending_updates=True)
     # initiate bot polling process
@@ -39,5 +42,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        # Graceful shutdown
         print("Stopping...")

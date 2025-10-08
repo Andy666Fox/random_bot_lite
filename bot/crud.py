@@ -2,6 +2,7 @@ from sqlalchemy.sql.expression import func
 from sqlalchemy import select
 from schemas import Channel
 from session_gen import get_session
+from monitoring.metrics_server import metrics
 import random
 
 
@@ -24,6 +25,7 @@ async def get_random_channel():
             count_stmt = select(func.count(Channel.id)).where(
                 Channel.channel_status == 1
             )
+            metrics.record_db_query()
             count_result = await session.execute(count_stmt)
             total_count = count_result.scalar()
 

@@ -10,7 +10,7 @@ from defaults import (
     ANSWER_TO_WRONG_TEXT,
     BLOCKED_CONTENT_TYPES
 )
-from middlewares import CooldownMW
+from middlewares import CooldownMW, MetricsMW
 from crud import get_random_channel
 
 import random
@@ -22,7 +22,9 @@ import random
 decline_router = Router()
 get_channel_router = Router()
 decline_router.message.middleware(CooldownMW())
+decline_router.message.middleware(MetricsMW())
 get_channel_router.message.middleware(CooldownMW())
+get_channel_router.message.middleware(MetricsMW())
 
 
 # Initial button handler
