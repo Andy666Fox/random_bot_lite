@@ -6,7 +6,7 @@ from aiohttp import web
 import base64
 import os
 
-class MetricsCollector:
+class MetricsServer:
     def __init__(self):
         self.requests_count = 0
         self.db_queries_count = 0
@@ -80,7 +80,7 @@ class MetricsCollector:
         while history_deque and current_time - history_deque[0] > self.window_size:
             history_deque.popleft()
 
-metrics = MetricsCollector()
+metrics = MetricsServer()
 
 def check_auth(credentials: str) -> bool:
     username = os.getenv("METRICS_USERNAME")
