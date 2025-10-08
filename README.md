@@ -29,10 +29,6 @@ A Telegram bot for discovering random channels in the depths of Telegram. Helps 
 - aiogram 3.x 
 - Postgresql 
 
-**DevOps:**
-- Docker
-- Prometheus + Grafana for monitoring
-- Loki for logging
 
 ## 📦 Docker
 
