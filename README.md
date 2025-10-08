@@ -2,7 +2,6 @@
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![aiogram](https://img.shields.io/badge/aiogram-3.x-green.svg)
-![SQLite](https://img.shields.io/badge/postgresql-database-orange.svg)
 
 A Telegram bot for discovering random channels in the depths of Telegram. Helps you explore new communities and content.
 
