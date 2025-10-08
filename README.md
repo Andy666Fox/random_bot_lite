@@ -8,7 +8,6 @@ A Telegram bot for discovering random channels in the depths of Telegram. Helps 
 
 **🤖 He's already waiting for you:** [@synctgrand_bot](https://t.me/synctgrand_bot)
 
-## Work has stopped, the author is looking for money to pay for the servers(
 ## ✨ Features
 
 - **Random channels** - get suggestions for interesting Telegram channels
