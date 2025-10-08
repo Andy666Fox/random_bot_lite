@@ -10,7 +10,7 @@ logs
 common
 *.lock
 *.ruff_cache
-
+*.db
 # Virtual environments
 .venv
 *.env
