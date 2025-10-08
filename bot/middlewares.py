@@ -20,6 +20,8 @@ class CooldownMW(BaseMiddleware):
         current_time = time.time()
 
         try:
+
+            
             handler_name = getattr(handler, '__name__', 'unknown_handler')
             if handler_name == 'unknown_handler':
                 if hasattr(handler, 'func'):
