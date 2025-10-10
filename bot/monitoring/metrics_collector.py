@@ -21,9 +21,9 @@ class MetricsCollector:
     def add_latency(self, latency):
         self.latency_history.append(latency)
 
-    def get_rps(self):
+    def get_rpm(self):
         now = time.time()
-        while self.requests_times and self.requests_times[0] < now - 1:
+        while self.requests_times and self.requests_times[0] < now - 60:
             self.requests_times.popleft()
         return len(self.requests_times)
     
@@ -43,11 +43,11 @@ class MetricsCollector:
     
     def collect_metrics(self):
         while not self.stop_event.wait(self.interval):
-            rps = self.get_rps()
+            rpm = self.get_rpm()
             active_users = self.get_active_users_count()
             avg_latency = self.get_avg_latency()
 
-            bot_logger.log_metric("rps", rps, {"interval": "1s"})
+            bot_logger.log_metric("rps", rpm, {"interval": "1m"})
             bot_logger.log_metric("active_users", active_users, {"window": f"{self.window_size}s"})
             bot_logger.log_metric("avg_latency", avg_latency, {"period": "last_100_requests"})
 
