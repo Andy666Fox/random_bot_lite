@@ -2,30 +2,16 @@ from sqlalchemy.sql.expression import func
 from sqlalchemy import select
 from schemas import Channel
 from session_gen import get_session
-from monitoring.metrics_server import metrics
+from log_manager import bot_logger
 import random
 
 
 async def get_random_channel():
-    """
-    Retrieve a random active channel nickname from the database.
-
-    This function uses a two-step approach:
-    1. Count total active channels (channel_status = 1)
-    2. Use random offset to select one channel
-
-    Returns:
-        Optional[str]: Channel nickname if found, None if no active channels exist
-
-    Raises:
-        Exception: Database connection or query errors are caught and logged
-    """
     try:
         async with get_session() as session:
             count_stmt = select(func.count(Channel.id)).where(
                 Channel.channel_status == 1
             )
-            metrics.record_db_query()
             count_result = await session.execute(count_stmt)
             total_count = count_result.scalar()
 
@@ -46,4 +32,5 @@ async def get_random_channel():
 
     except Exception as e:
         print(f"Processing failed: {e}")
+        bot_logger.log_error(e, context={'get_random_channel_func_error': None})
         return None
