@@ -24,7 +24,7 @@ class BotLoger:
 
     def _log(self, log_type: str, data: Dict[str, Any]):
         log_entry = {
-            'timestamp': datetime.now(timezone.utc),
+            'timestamp': str(datetime.now(timezone.utc)),
             'type': log_type,
             **data
         }

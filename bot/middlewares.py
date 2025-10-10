@@ -5,6 +5,7 @@ from log_manager import bot_logger
 from defaults import ANSWER_TO_FLOOD
 import time
 
+
 class CooldownMW(BaseMiddleware):
     def __init__(self, cooldown_seconds: int = 1):
         self.user_last_action = {}
@@ -33,4 +34,29 @@ class CooldownMW(BaseMiddleware):
         self.user_last_action[user_id] = current_time
         return await handler(event, data)
     
+class MetricsMW(BaseMiddleware):
+    def __init__(self, collector):
+        super().__init__()
+        self.collector = collector
+
+    async def __call__(
+        self,
+        handler: Callable,
+        event: Message,
+        data: Dict[str, Any]
+    ) -> Any:
+        user_id = event.from_user.id
+        current_time = time.time()
+
+        self.collector.add_request_time(current_time)
+        self.collector.add_active_user(user_id, current_time)
+        
+        start_time = time.time()
+        try:
+            result = await handler(event, data)
+        finally:
+            latency = time.time() - start_time
+            self.collector.add_latency(latency)
+
+        return result
 
