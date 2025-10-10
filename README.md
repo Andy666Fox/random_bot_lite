@@ -6,21 +6,13 @@
 A Telegram bot for discovering random channels in the depths of Telegram. Helps you explore new communities and content.
 
 **🤖 He's already waiting for you:** [@synctgrand_bot](https://t.me/synctgrand_bot)
+**🎮 Developer blog** [Synchronisica](https://t.me/Synchronisica)
 
 ## ✨ Features
 
 - **Random channels** - get suggestions for interesting Telegram channels
 - **Asynchronous processing** - built on aiogram 3.x for high performance
 - **Simple interface** - clear commands and quick responses
-
-## 🎮 Bot Commands
-
-| Command | Description |
-|---------|-------------|
-| `/start` | Welcome message and bot description |
-| `/help` | List of available commands |
-| `/random` | Get a random channel suggestion |
-| `/info` | Bot statistics and information (**in development**) | 
 
 ## 🛠 Tech Stack
 
