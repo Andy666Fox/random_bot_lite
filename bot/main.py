@@ -2,8 +2,8 @@ import asyncio
 from aiogram import Bot, Dispatcher
 import os
 
-from handlers import decline_router, get_channel_router
-from schemas import create_tables
+from handlers.handlers import decline_router, get_channel_router
+from database.schemas import create_tables
 from dotenv import load_dotenv
 from log_manager import bot_logger
 

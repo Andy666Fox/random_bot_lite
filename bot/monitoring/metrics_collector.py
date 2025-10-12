@@ -47,7 +47,7 @@ class MetricsCollector:
             active_users = self.get_active_users_count()
             avg_latency = self.get_avg_latency()
 
-            bot_logger.log_metric("rps", rpm, {"interval": "1m"})
+            bot_logger.log_metric("rpm", rpm, {"interval": "1m"})
             bot_logger.log_metric("active_users", active_users, {"window": f"{self.window_size}s"})
             bot_logger.log_metric("avg_latency", avg_latency, {"period": "last_100_requests"})
 

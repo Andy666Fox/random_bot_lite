@@ -2,7 +2,7 @@ from aiogram import types, Router
 from aiogram.filters.command import Command
 from aiogram import F
 
-from keyboards import get_main_keyboard
+from keyboards.keyboards import get_main_keyboard
 from defaults import (
     ANSWERS,
     START_MESSAGE,
@@ -10,8 +10,8 @@ from defaults import (
     ANSWER_TO_WRONG_TEXT,
     BLOCKED_CONTENT_TYPES
 )
-from middlewares import CooldownMW, MetricsMW
-from crud import get_random_channel
+from middlewares.middlewares import CooldownMW, MetricsMW
+from database.crud import get_random_channel
 from log_manager import bot_logger
 from monitoring.metrics_collector import MetricsCollector
 

@@ -4,7 +4,7 @@ Database session management module.
 Provides utilities for creating and managing async SQLAlchemy database sessions
 with proper transaction handling and cleanup.
 """
-from schemas import engine
+from database.schemas import engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from contextlib import asynccontextmanager
