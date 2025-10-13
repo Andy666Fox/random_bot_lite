@@ -10,10 +10,9 @@ from defaults import (
     ANSWER_TO_WRONG_TEXT,
     BLOCKED_CONTENT_TYPES
 )
-from middlewares.middlewares import CooldownMW, MetricsMW
-from database.crud import get_random_channel
+from middlewares.middlewares import CooldownMW
+from bot.database.methods import get_random_channel
 from log_manager import bot_logger
-from monitoring.metrics_collector import MetricsCollector
 
 import random
 
@@ -21,16 +20,10 @@ import random
 # DECLINE routers react for invalid messages (message types)
 # GET_Channel normal work router. Control message sending from bot
 
-collector = MetricsCollector(interval=10, window_size=300)
-collector.start()
-
 decline_router = Router()
 get_channel_router = Router()
 decline_router.message.middleware(CooldownMW())
 get_channel_router.message.middleware(CooldownMW())
-decline_router.message.middleware(MetricsMW(collector))
-get_channel_router.message.middleware(MetricsMW(collector))
-
 
 # Initial button handler
 @get_channel_router.message(Command("start"))
@@ -60,5 +53,5 @@ async def handle_blocked_content(message: types.Message):
 @decline_router.message(F.text)
 async def default_response(message: types.Message):
     await message.answer(ANSWER_TO_WRONG_TEXT)
-    bot_logger.log_user_event(message.from_user.id, 'wrong text')
+    bot_logger.log_user_event(message.from_user.id, f'User entry: {str(message.text)}')
     await message.delete()

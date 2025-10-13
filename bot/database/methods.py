@@ -1,4 +1,4 @@
-from sqlalchemy.sql.expression import func, text
+from sqlalchemy.sql.expression import text
 from sqlalchemy import select
 from database.schemas import Channel
 from database.session_gen import get_session
@@ -26,7 +26,7 @@ async def get_random_channel():
 
     except Exception as e:
         print(f"Processing failed: {e}")
-        bot_logger.log_error(e, context={'get_random_channel_func_error': None})
+        bot_logger.log_error(e, context={'get_random_channel_func_error': e})
         return None
 
 
