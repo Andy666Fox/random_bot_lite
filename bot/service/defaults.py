@@ -9,6 +9,9 @@ START_MESSAGE = (
     "В случае если не кнопка не появляется, отправьте '/start'"
 )
 
+# TODO Edit commands description
+EXTRA_COMMANDS_DESCRIPTION = 'string'
+
 ANSWER_TO_MEDIA = "Не нужно ничего мне отправлять\nЯ не Майкрософт"
 
 ANSWER_TO_WRONG_TEXT = (

@@ -5,7 +5,7 @@ import os
 from handlers.handlers import decline_router, get_channel_router
 from database.schemas import create_tables
 from dotenv import load_dotenv
-from log_manager import bot_logger
+from bot.service.log_manager import bot_logger
 
 # Load environment variables from .env file
 load_dotenv()
