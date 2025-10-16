@@ -42,13 +42,6 @@ class BotLoger:
             "data": data,
         })
 
-    def log_metric(self, metric_name: str, value: Any, labels: Dict[str, str] = None):
-        self._log("metric", {
-            "metric_name": metric_name,
-            "value": value,
-            "labels": labels or {}
-        })
-
     def log_error(self, error: Exception, context: Dict[str, Any] = None):
         self._log("error", {
             "error": str(error),

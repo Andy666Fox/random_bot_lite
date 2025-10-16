@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 import os
-from log_manager import bot_logger
+from bot.service.log_manager import bot_logger
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -22,14 +22,16 @@ class Channel(Base):
 class Rating(Base):
     __tablename__ = 'ratings'
     id = Column(Integer, primary_key=True)
-    channel_nickname = Column(String, ForeignKey("channels.channelnick"))
-    stars_counts = Column(String, default='{"1": 0, "2": 0, "3": 0, "4": 0, "5": 0}')
+    channel_nickname = Column(String, ForeignKey("channels.id"))
+    likes = Column(Integer, default=5)
+    dislikes = Column(Integer, default=5)
 
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
+    telegram_id = Column(Integer, nullable=False)
     last_online = Column(DateTime)
-    last_channel = Column(String)
+    last_channel = Column(String, ForeignKey("channels.id"))
 
 engine = create_async_engine(os.getenv("BOT_DB_URL"), echo=False, future=True)
 
