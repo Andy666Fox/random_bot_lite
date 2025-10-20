@@ -95,7 +95,7 @@ async def show_stats(message: types.Message):
         return
     else:
         stats = await get_db_stats()
-        msg = ADMIN_STATS_GATHER_TEMPLATE.format(*stats)
+        msg = ADMIN_STATS_GATHER_TEMPLATE.format(**stats)
         await message.answer(msg)
     
     bot_logger.log_user_event(message.from_user.id, 'db stats requested', data={'is_admin': True})
