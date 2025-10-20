@@ -153,10 +153,7 @@ async def get_db_stats():
                 .where(User.last_online >= time_window)
             )
 
-            return {'total_channels':total_channels, 
-                    'active_status_ratio':active_status_ratio,
-                    'total_users':total_users,
-                    'active_users':active_users}
+            return [total_channels, active_status_ratio, total_users, active_users]
     except Exception as e:
         bot_logger.log_error(e, context={'get_db_stats_func_error': str(e)})
         return {}
