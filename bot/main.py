@@ -2,10 +2,10 @@ import asyncio
 from aiogram import Bot, Dispatcher
 import os
 
-from handlers.handlers import decline_router, get_channel_router
+from handlers.handlers import decline_router, basic_router
 from database.schemas import create_tables
 from dotenv import load_dotenv
-from bot.service.log_manager import bot_logger
+from service.log_manager import bot_logger
 
 # Load environment variables from .env file
 load_dotenv()
@@ -28,7 +28,7 @@ async def main():
     # Connect second-level routers for handling different event types:
     # - get_channel_router: handles channel information requests
     # - decline_router: handles rejections or declines
-    dp.include_routers(get_channel_router, decline_router)
+    dp.include_routers(basic_router, decline_router)
 
     # ignore previos messages from users
     await bot.delete_webhook(drop_pending_updates=True)

@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 import os
-from bot.service.log_manager import bot_logger
+from service.log_manager import bot_logger
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,19 +20,26 @@ class Channel(Base):
     status = Column(Integer, default=1)
     avg_score = Column(Float, default=5.0)
 
+    ratings = relationship("Rating", back_populates="channel", cascade="all, delete-orphan")
+
 class Rating(Base):
     __tablename__ = 'ratings'
     id = Column(Integer, primary_key=True)
-    channel_nickname = Column(String, ForeignKey("channels.id"))
+    channel_id = Column(Integer, ForeignKey("channels.id"))
     likes = Column(Integer, default=5)
     dislikes = Column(Integer, default=5)
+
+    channel = relationship("Channel", back_populates="ratings")
 
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    telegram_id = Column(Integer, nullable=False)
+    telegram_id = Column(Integer, nullable=False, unique=True)
+    nickname = Column(String, default=None)
     last_online = Column(DateTime)
-    last_channel = Column(String, ForeignKey("channels.id"))
+    last_channel_id = Column(Integer, ForeignKey("channels.id"), default=1)
+
+    last_channel = relationship("Channel", foreign_keys=[last_channel_id])
 
 engine = create_async_engine(os.getenv("BOT_DB_URL"), echo=False, future=True)
 

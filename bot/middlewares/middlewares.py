@@ -1,8 +1,8 @@
 from typing import Any, Callable, Dict, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from bot.service.log_manager import bot_logger
-from bot.service.defaults import ANSWER_TO_FLOOD
+from service.log_manager import bot_logger
+from service.default_answers import ANSWER_TO_FLOOD
 import time
 
 

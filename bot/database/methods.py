@@ -1,9 +1,14 @@
 from sqlalchemy.sql.expression import text
-from sqlalchemy import select
-from database.schemas import Channel
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
+from sqlalchemy import select, func, desc
+from database.schemas import Channel, User, Rating
 from database.session_gen import get_session
-from bot.service.log_manager import bot_logger
+from service.log_manager import bot_logger
+from service.bayesian_avarage import get_bavg_score
+from datetime import datetime, timezone
 import random
+from datetime import datetime, timedelta
 
 async def get_random_channel():
     try:
@@ -29,52 +34,143 @@ async def get_random_channel():
         bot_logger.log_error(e, context={'get_random_channel_func_error': e})
         return None
     
-# TODO Define next functions logic
 async def insert_suggested_channel(channelnick: str):
-    # insert suggested channel if doesnt exist and valid
-    pass
+    try:
+        async with get_session() as session:
+            suggestion = Channel(
+                channelnick=channelnick,
+                status = 1,
+                avg_score = 5.0
+            )
+            session.add(suggestion)
+            await session.commit()
+            await session.refresh(suggestion)
+            return True, 'created'
+    except IntegrityError:
+        return False, 'exists'
+    except Exception as e:
+        print(f"Inserting failed: {e}")
+        bot_logger.log_error(e, context={'insert_suggested_channel_func_error': e})
+        return False, 'error'
+    
+async def insert_user(user_id: int, nickname:str):
+    try:
+        async with get_session() as session:
+            result = await session.execute(
+                select(User).where(User.telegram_id == user_id)
+            )
+            user = result.scalar_one_or_none()
 
-async def insert_user(user_id: int):
-    # register user 
-    pass
-
+            if user:
+                return False
+            else:
+                new_user = User(
+                    telegram_id=user_id,
+                    nickname=nickname,
+                    last_online=datetime.now(timezone.utc)
+                )
+                session.add(new_user)
+                await session.commit()
+                await session.refresh(new_user)
+                return True
+    except Exception as e:
+        print(f"Inserting failed: {e}")
+        bot_logger.log_error(e, context={'insert_user_func_error': e})
+        return False         
+    
 async def update_channel_rating(channelnick: str, score: int):
-    #if score==1 db.rating(channels.channelnick.id).id.likes += 1
-    #elif score==-1 db.rating(channels.channelnick.id).id.dislikes += 1
-    pass
+    try:
+        async with get_session() as session:
+            result = await session.execute(select(Channel)
+                                           .options(selectinload(Channel.ratings))
+                                           .where(Channel.channelnick == channelnick))
+            
+            channel = result.scalar_one_or_none()
 
+            if channel.ratings:
+                rating = channel[0]
+            else:
+                rating = Rating(channel_id=channel.id, likes=5, dislikes=5)
+                session.add(rating)
+
+            if score == 1:
+                rating.likes += 1
+            elif score == -1:
+                rating.dislikes += 1
+            else:
+                pass
+
+            await session.commit()
+            await update_channel_avg_score(channelnick)
+            return True
+    except Exception as e:
+        bot_logger.log_error(e, context={'update_channel_rating_func_error': e})
+        return False
+
+async def update_channel_avg_score(channelnick: str):
+    try:
+        async with get_session() as session:
+            result = await session.execute(
+                select(Channel, Rating)
+                .join(Rating, Channel.id == Rating.channel_id)
+                .where(Channel.channelnick == channelnick)
+            )
+
+            row = result.first()
+            channel, rating = row
+            bscore = get_bavg_score(rating.likes, rating.dislikes)
+            bot_logger.log_system_event('channel score updated', data={'channel score': f'{channelnick} score changed from {channel.avg_score} to {bscore}'})
+
+            channel.avg_score = bscore
+            await session.commit()
+        return True
+    except Exception as e:
+        bot_logger.log_error(e, context={'update_avg_score_func_error': channelnick})
+        return False
+    
 async def get_db_stats():
-    # get info about channels count, status ratio, inserted last 24 hours
-    # get info about active users (last_online < 30days)
-    # get info about top rating channels
-    pass
+    try:
+        async with get_session() as session:
+            total_channels = await session.scalar(
+                select(func.count(Channel.id))
+            )
 
+            status_stats = await session.execute(
+                select(Channel.status, func.count(Channel.id))
+                .group_by(Channel.status)
+            )
+            status_dict = {status: count for status, count in status_stats.all()}
 
-# async def get_random_channel():
-#     try:
-#         async with get_session() as session:
-#             count_stmt = select(func.count(Channel.id)).where(
-#                 Channel.status == 1
-#             )
-#             count_result = await session.execute(count_stmt)
-#             total_count = count_result.scalar()
+            active_status_ratio = (status_dict[1] / total_channels) * 100
 
-#             if total_count == 0:
-#                 return None
+            total_users = await session.scalar(
+                select(func.count(User.id))
+            )
 
-#             random_offset = random.randint(0, total_count - 1)
+            time_window = datetime.now() - timedelta(days=15)
+            active_users = await session.scalar(
+                select(func.count(User.id))
+                .where(User.last_online >= time_window)
+            )
 
-#             stmt = (
-#                 select(Channel.channelnick)
-#                 .where(Channel.status == 1)
-#                 .offset(random_offset)
-#                 .limit(1)
-#             )
-#             result = await session.execute(stmt)
-#             channel_nick = result.scalar_one_or_none()
-#             return channel_nick
+            query = (
+                select(
+                    Channel.channelnick,
+                    Channel.avg_score,
+                    Rating.likes,
+                    Rating.dislikes,
+                    (Rating.likes + Rating.dislikes).label('total_votes')
+                )
+                .join(Rating, Channel.id == Rating.channel_id)
+                .order_by(desc(Channel.avg_score))
+                .limit(10)
+            )
+            
+            top_10_channels_by_score = await session.execute(query)
+            top_10_channels_by_score = '\n' + '\n'.join([x[0] for x in top_10_channels_by_score.all()])
 
-#     except Exception as e:
-#         print(f"Processing failed: {e}")
-#         bot_logger.log_error(e, context={'get_random_channel_func_error': None})
-#         return None
+            return [total_channels, active_status_ratio, total_users, active_users, top_10_channels_by_score]
+    except Exception as e:
+        bot_logger.log_error(e, context={'get_db_stats_func_error': str(e)})
+        return {}
+
