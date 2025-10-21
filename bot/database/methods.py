@@ -1,14 +1,16 @@
-from sqlalchemy.sql.expression import text
+import random
+from datetime import UTC, datetime, timedelta
+
+from service.bayesian_avarage import get_bavg_score
+from service.log_manager import bot_logger
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select, func, desc
-from database.schemas import Channel, User, Rating
+from sqlalchemy.sql.expression import text
+
+from database.schemas import Channel, Rating, User
 from database.session_gen import get_session
-from service.log_manager import bot_logger
-from service.bayesian_avarage import get_bavg_score
-from datetime import datetime, timezone
-import random
-from datetime import datetime, timedelta
+
 
 async def get_random_channel():
     try:
@@ -21,9 +23,7 @@ async def get_random_channel():
 
             while True:
                 random_rowid = random.randint(1, max_rowid)
-                stmt = select(Channel.channelnick).where(
-                    Channel.id == random_rowid
-                )
+                stmt = select(Channel.channelnick).where(Channel.id == random_rowid)
                 result = await session.execute(stmt)
                 channel = result.scalar_one_or_none()
                 if channel:
@@ -31,34 +31,30 @@ async def get_random_channel():
 
     except Exception as e:
         print(f"Processing failed: {e}")
-        bot_logger.log_error(e, context={'get_random_channel_func_error': e})
+        bot_logger.log_error(e, context={"get_random_channel_func_error": e})
         return None
-    
+
+
 async def insert_suggested_channel(channelnick: str):
     try:
         async with get_session() as session:
-            suggestion = Channel(
-                channelnick=channelnick,
-                status = 1,
-                avg_score = 5.0
-            )
+            suggestion = Channel(channelnick=channelnick, status=1, avg_score=5.0)
             session.add(suggestion)
             await session.commit()
             await session.refresh(suggestion)
-            return True, 'created'
+            return True, "created"
     except IntegrityError:
-        return False, 'exists'
+        return False, "exists"
     except Exception as e:
         print(f"Inserting failed: {e}")
-        bot_logger.log_error(e, context={'insert_suggested_channel_func_error': e})
-        return False, 'error'
-    
-async def insert_user(user_id: int, nickname:str):
+        bot_logger.log_error(e, context={"insert_suggested_channel_func_error": e})
+        return False, "error"
+
+
+async def insert_user(user_id: int, nickname: str):
     try:
         async with get_session() as session:
-            result = await session.execute(
-                select(User).where(User.telegram_id == user_id)
-            )
+            result = await session.execute(select(User).where(User.telegram_id == user_id))
             user = result.scalar_one_or_none()
 
             if user:
@@ -67,7 +63,7 @@ async def insert_user(user_id: int, nickname:str):
                 new_user = User(
                     telegram_id=user_id,
                     nickname=nickname,
-                    last_online=datetime.now(timezone.utc)
+                    last_online=datetime.now(UTC),
                 )
                 session.add(new_user)
                 await session.commit()
@@ -75,16 +71,19 @@ async def insert_user(user_id: int, nickname:str):
                 return True
     except Exception as e:
         print(f"Inserting failed: {e}")
-        bot_logger.log_error(e, context={'insert_user_func_error': e})
-        return False         
-    
+        bot_logger.log_error(e, context={"insert_user_func_error": e})
+        return False
+
+
 async def update_channel_rating(channelnick: str, score: int):
     try:
         async with get_session() as session:
-            result = await session.execute(select(Channel)
-                                           .options(selectinload(Channel.ratings))
-                                           .where(Channel.channelnick == channelnick))
-            
+            result = await session.execute(
+                select(Channel)
+                .options(selectinload(Channel.ratings))
+                .where(Channel.channelnick == channelnick)
+            )
+
             channel = result.scalar_one_or_none()
 
             if channel.ratings:
@@ -101,13 +100,14 @@ async def update_channel_rating(channelnick: str, score: int):
                 pass
 
             await session.commit()
-            await update_channel_avg_score(channelnick)
+            await _update_channel_avg_score(channelnick)
             return True
     except Exception as e:
-        bot_logger.log_error(e, context={'update_channel_rating_func_error': e})
+        bot_logger.log_error(e, context={"update_channel_rating_func_error": e})
         return False
 
-async def update_channel_avg_score(channelnick: str):
+
+async def _update_channel_avg_score(channelnick: str):
     try:
         async with get_session() as session:
             result = await session.execute(
@@ -119,42 +119,41 @@ async def update_channel_avg_score(channelnick: str):
             row = result.first()
             channel, rating = row
             bscore = get_bavg_score(rating.likes, rating.dislikes)
-            bot_logger.log_system_event('channel score updated', data={'channel score': f'{channelnick} score changed from {channel.avg_score} to {bscore}'})
+            bot_logger.log_system_event(
+                "channel score updated",
+                data={
+                    "channel score": f"{channelnick} score changed from {channel.avg_score} to {bscore}"
+                },
+            )
 
             channel.avg_score = bscore
             await session.commit()
         return True
     except Exception as e:
-        bot_logger.log_error(e, context={'update_avg_score_func_error': channelnick})
+        bot_logger.log_error(e, context={"update_avg_score_func_error": channelnick})
         return False
-    
+
+
 async def get_db_stats():
     try:
         async with get_session() as session:
-            total_channels = await session.scalar(
-                select(func.count(Channel.id))
-            )
+            total_channels = await session.scalar(select(func.count(Channel.id)))
 
             status_stats = await session.execute(
-                select(Channel.status, func.count(Channel.id))
-                .group_by(Channel.status)
+                select(Channel.status, func.count(Channel.id)).group_by(Channel.status)
             )
             status_dict = {status: count for status, count in status_stats.all()}
 
             active_status_ratio = (status_dict[1] / total_channels) * 100
 
-            total_users = await session.scalar(
-                select(func.count(User.id))
-            )
+            total_users = await session.scalar(select(func.count(User.id)))
 
             time_window = datetime.now() - timedelta(days=15)
             active_users = await session.scalar(
-                select(func.count(User.id))
-                .where(User.last_online >= time_window)
+                select(func.count(User.id)).where(User.last_online >= time_window)
             )
 
             return [total_channels, active_status_ratio, total_users, active_users]
     except Exception as e:
-        bot_logger.log_error(e, context={'get_db_stats_func_error': str(e)})
+        bot_logger.log_error(e, context={"get_db_stats_func_error": str(e)})
         return {}
-
