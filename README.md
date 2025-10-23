@@ -18,9 +18,8 @@ A Telegram bot for discovering random channels in the depths of Telegram. Helps 
 ## 🛠 Tech Stack
 
 **Core:**
-- Python 3.10+
+- Python 3.13+
 - aiogram 3.x 
-- Postgresql 
 
 
 ## 📦 Docker

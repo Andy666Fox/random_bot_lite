@@ -1,13 +1,10 @@
 import os
 
-from dotenv import load_dotenv
 from service.log_manager import bot_logger
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
-load_dotenv()
 
 Base = declarative_base()
 
