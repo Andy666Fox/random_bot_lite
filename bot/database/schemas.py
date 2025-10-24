@@ -1,7 +1,7 @@
 import os
 
 from service.log_manager import bot_logger
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, BigInteger
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -11,8 +11,8 @@ Base = declarative_base()
 
 class Channel(Base):
     __tablename__ = "channels"
-    id = Column(Integer, primary_key=True)
-    channelnick = Column(String, unique=True, nullable=False, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    channelnick = Column(String(50), unique=True, nullable=False, index=True)
     status = Column(Integer, default=1)
     avg_score = Column(Float, default=5.0)
 
@@ -22,7 +22,7 @@ class Channel(Base):
 class Rating(Base):
     __tablename__ = "ratings"
     id = Column(Integer, primary_key=True)
-    channel_id = Column(Integer, ForeignKey("channels.id"))
+    channel_id = Column(Integer, ForeignKey("channels.id", ondelete="CASCADE"))
     likes = Column(Integer, default=5)
     dislikes = Column(Integer, default=5)
 
@@ -32,15 +32,20 @@ class Rating(Base):
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    telegram_id = Column(Integer, nullable=False, unique=True)
-    nickname = Column(String, default=None)
+    telegram_id = Column(BigInteger, nullable=False, unique=True)
+    nickname = Column(String(50), default=None)
     last_online = Column(DateTime)
     last_channel_id = Column(Integer, ForeignKey("channels.id"), default=1)
 
     last_channel = relationship("Channel", foreign_keys=[last_channel_id])
 
 
-engine = create_async_engine(os.getenv("BOT_DB_URL"), echo=False, future=True)
+engine = create_async_engine(os.getenv("DB_URL"), 
+                             echo=False, 
+                             future=True,
+                             pool_pre_ping=True,
+                             pool_size = 10,
+                             max_overflow=20)
 
 
 async def create_tables():

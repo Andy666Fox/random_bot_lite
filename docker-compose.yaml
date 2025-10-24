@@ -1,4 +1,27 @@
 services:
+  mysql_db:
+    image: mysql:8.2
+    container_name: bot_db
+    restart: always
+    env_file: 
+      - .env
+    ports:
+      - "${DB_PORT}:${DB_DEFAULT_PORT}"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./bot/mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - bot_network 
+
   bot:
     container_name: ${BOT_CONTAINER_NAME}
     build:
@@ -7,13 +30,20 @@ services:
     env_file:
       - .env
     networks:
-      - tgrbot_network
+      - bot_network
     restart: unless-stopped
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    environment:
+      DB_URL: mysql+aiomysql://${DB_USER}:${DB_PASSWORD}@mysql_db:${DB_DEFAULT_PORT}/${DB_NAME}?charset=utf8mb4
     volumes:
       - ./bot/logs:/app/bot/logs
-      - ./bot/data:/app/bot/data
 
+volumes:
+  mysql_data:
+    driver: local
 
 networks:
-  tgrbot_network:
+  bot_network:
     driver: bridge
