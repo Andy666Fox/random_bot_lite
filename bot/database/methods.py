@@ -15,19 +15,32 @@ from database.session_gen import get_session
 async def get_random_channel():
     try:
         async with get_session() as session:
-            max_rowid_result = await session.execute(text("SELECT MAX(ROWID) FROM channels"))
-            max_rowid = max_rowid_result.scalar()
+            # Получаем min и max id (можно кэшировать на N минут)
+            min_max_result = await session.execute(
+                text("SELECT MIN(id), MAX(id) FROM channels")
+            )
+            min_id, max_id = min_max_result.fetchone()
 
-            if not max_rowid:
+            if min_id is None or max_id is None:
                 return None
 
-            while True:
-                random_rowid = random.randint(1, max_rowid)
-                stmt = select(Channel.channelnick).where(Channel.id == random_rowid)
-                result = await session.execute(stmt)
-                channel = result.scalar_one_or_none()
-                if channel:
-                    return channel
+            # Генерируем случайный ID в диапазоне
+            random_id = random.randint(min_id, max_id)
+
+            # Ищем первую запись >= random_id
+            stmt = select(Channel.channelnick).where(Channel.id >= random_id).order_by(Channel.id).limit(1)
+            result = await session.execute(stmt)
+            channel = result.scalar_one_or_none()
+
+            if channel:
+                return channel
+
+            # Если не нашли, ищем с начала (для замыкания)
+            stmt = select(Channel.channelnick).where(Channel.id >= min_id).order_by(Channel.id).limit(1)
+            result = await session.execute(stmt)
+            channel = result.scalar_one_or_none()
+
+            return channel
 
     except Exception as e:
         print(f"Processing failed: {e}")

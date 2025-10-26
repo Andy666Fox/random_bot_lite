@@ -16,3 +16,4 @@ common
 .venv
 *.env
 mysql_data/
+TODO.txt
