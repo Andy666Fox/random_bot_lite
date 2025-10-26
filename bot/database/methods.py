@@ -122,7 +122,8 @@ async def _update_channel_avg_score(channelnick: str):
             bot_logger.log_system_event(
                 "channel score updated",
                 data={
-                    "channel score": f"{channelnick} score changed from {channel.avg_score} to {bscore}"
+                    "channel score": f"{channelnick} score changed from \
+                                      {channel.avg_score} to {bscore}"
                 },
             )
 
@@ -142,7 +143,7 @@ async def get_db_stats():
             status_stats = await session.execute(
                 select(Channel.status, func.count(Channel.id)).group_by(Channel.status)
             )
-            status_dict = {status: count for status, count in status_stats.all()}
+            status_dict = dict(status_stats.all())
 
             active_status_ratio = (status_dict[1] / total_channels) * 100
 

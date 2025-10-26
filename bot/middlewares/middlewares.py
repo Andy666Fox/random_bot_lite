@@ -24,10 +24,9 @@ class CooldownMW(BaseMiddleware):
 
         try:
             handler_name = getattr(handler, "__name__", "unknown_handler")
-            if handler_name == "unknown_handler":
-                if hasattr(handler, "func"):
-                    handler_name = getattr(handler.func, "__name__", "unknown_handler")
-        except:
+            if handler_name == "unknown_handler" and hasattr(handler, "func"):
+                handler_name = getattr(handler.func, "__name__", "unknown_handler")
+        except Exception:
             handler_name = "unknown_handler"
 
         last_action = self.user_last_action.get(user_id)

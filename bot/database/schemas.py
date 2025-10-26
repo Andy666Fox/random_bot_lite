@@ -1,7 +1,7 @@
 import os
 
 from service.log_manager import bot_logger
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, BigInteger
+from sqlalchemy import BigInteger, Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -40,12 +40,9 @@ class User(Base):
     last_channel = relationship("Channel", foreign_keys=[last_channel_id])
 
 
-engine = create_async_engine(os.getenv("DB_URL"), 
-                             echo=False, 
-                             future=True,
-                             pool_pre_ping=True,
-                             pool_size = 10,
-                             max_overflow=20)
+engine = create_async_engine(
+    os.getenv("DB_URL"), echo=False, future=True, pool_pre_ping=True, pool_size=10, max_overflow=20
+)
 
 
 async def create_tables():
