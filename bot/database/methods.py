@@ -35,13 +35,6 @@ async def get_random_channel():
             if channel:
                 return channel
 
-            # Если не нашли, ищем с начала (для замыкания)
-            stmt = select(Channel.channelnick).where(Channel.id >= min_id).order_by(Channel.id).limit(1)
-            result = await session.execute(stmt)
-            channel = result.scalar_one_or_none()
-
-            return channel
-
     except Exception as e:
         print(f"Processing failed: {e}")
         bot_logger.log_error(e, context={"get_random_channel_func_error": e})
@@ -92,25 +85,34 @@ async def update_channel_rating(channelnick: str, score: int):
     try:
         async with get_session() as session:
             result = await session.execute(
-                select(Channel)
-                .options(selectinload(Channel.ratings))
+                select(Channel, Rating)
+                .join(Rating, Channel.id == Rating.channel_id, isouter=True) # LEFT JOIN
                 .where(Channel.channelnick == channelnick)
             )
+            row = result.first()
 
-            channel = result.scalar_one_or_none()
+            if not row:
+                # Канал не найден
+                return False
 
-            if channel.ratings:
-                rating = channel[0]
+            channel, rating = row
+
+            if rating is None:
+                # Рейтинг не существует, создаем новый
+                new_rating = Rating(
+                    channel_id=channel.id,
+                    likes=5 if score == 1 else 4,  # Инициализация
+                    dislikes=5 if score == -1 else 4
+                )
+                session.add(new_rating)
+                await session.flush() # Получаем ID нового рейтинга, если нужно
+                rating = new_rating
             else:
-                rating = Rating(channel_id=channel.id, likes=5, dislikes=5)
-                session.add(rating)
-
-            if score == 1:
-                rating.likes += 1
-            elif score == -1:
-                rating.dislikes += 1
-            else:
-                pass
+                # Рейтинг существует, обновляем
+                if score == 1:
+                    rating.likes += 1
+                elif score == -1:
+                    rating.dislikes += 1
 
             await session.commit()
             await _update_channel_avg_score(channelnick)

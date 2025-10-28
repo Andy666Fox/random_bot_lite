@@ -5,6 +5,8 @@
 .gitignore
 .dockerignore
 *.lock
+**/mysql.sock
+**/tmp/**
 __pycache__
 Dockerfile
 pyproject.toml
