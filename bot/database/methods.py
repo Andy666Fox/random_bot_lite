@@ -5,7 +5,6 @@ from service.bayesian_avarage import get_bavg_score
 from service.log_manager import bot_logger
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import selectinload
 from sqlalchemy.sql.expression import text
 
 from database.schemas import Channel, Rating, User
@@ -15,20 +14,20 @@ from database.session_gen import get_session
 async def get_random_channel():
     try:
         async with get_session() as session:
-            # Получаем min и max id (можно кэшировать на N минут)
-            min_max_result = await session.execute(
-                text("SELECT MIN(id), MAX(id) FROM channels")
-            )
+            min_max_result = await session.execute(text("SELECT MIN(id), MAX(id) FROM channels"))
             min_id, max_id = min_max_result.fetchone()
 
             if min_id is None or max_id is None:
                 return None
 
-            # Генерируем случайный ID в диапазоне
             random_id = random.randint(min_id, max_id)
 
-            # Ищем первую запись >= random_id
-            stmt = select(Channel.channelnick).where(Channel.id >= random_id).order_by(Channel.id).limit(1)
+            stmt = (
+                select(Channel.channelnick)
+                .where(Channel.id >= random_id)
+                .order_by(Channel.id)
+                .limit(1)
+            )
             result = await session.execute(stmt)
             channel = result.scalar_one_or_none()
 
@@ -86,29 +85,23 @@ async def update_channel_rating(channelnick: str, score: int):
         async with get_session() as session:
             result = await session.execute(
                 select(Channel, Rating)
-                .join(Rating, Channel.id == Rating.channel_id, isouter=True) # LEFT JOIN
+                .join(Rating, Channel.id == Rating.channel_id, isouter=True)  # LEFT JOIN
                 .where(Channel.channelnick == channelnick)
             )
             row = result.first()
 
-            if not row:
-                # Канал не найден
-                return False
-
             channel, rating = row
 
             if rating is None:
-                # Рейтинг не существует, создаем новый
                 new_rating = Rating(
                     channel_id=channel.id,
                     likes=5 if score == 1 else 4,  # Инициализация
-                    dislikes=5 if score == -1 else 4
+                    dislikes=5 if score == -1 else 4,
                 )
                 session.add(new_rating)
-                await session.flush() # Получаем ID нового рейтинга, если нужно
+                await session.flush()
                 rating = new_rating
             else:
-                # Рейтинг существует, обновляем
                 if score == 1:
                     rating.likes += 1
                 elif score == -1:
@@ -137,7 +130,8 @@ async def _update_channel_avg_score(channelnick: str):
             bot_logger.log_system_event(
                 "channel score updated",
                 data={
-                    "channel score": f"{channelnick} score changed from {channel.avg_score} to {bscore}"
+                    "channel score": f"{channelnick} score changed from \
+                                       {channel.avg_score} to {bscore}"
                 },
             )
 

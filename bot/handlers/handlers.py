@@ -1,5 +1,3 @@
-import random
-
 from aiogram import F, Router, types
 from aiogram.filters.command import Command, CommandObject
 from aiogram.types import CallbackQuery
@@ -11,8 +9,8 @@ from database.methods import (
     update_channel_rating,
 )
 from keyboards.keyboards import get_channel_rating_inline_keyboard, get_main_keyboard
-from middlewares.middlewares import CooldownMW
 from llm_manager.summary import get_summary
+from middlewares.middlewares import CooldownMW
 from service.admin_validation import is_admin
 from service.channel_validation import validate_channel
 from service.default_answers import (
@@ -20,7 +18,6 @@ from service.default_answers import (
     ADMIN_VALIDATION_FAILED_MESSAGE,
     ANSWER_TO_MEDIA,
     ANSWER_TO_WRONG_TEXT,
-    ANSWERS,
     BLOCKED_CONTENT_TYPES,
     EMPTY_SUGGEST_ARGS,
     EXTRA_COMMANDS_DESCRIPTION,
@@ -77,7 +74,7 @@ async def send_welcome(message: types.Message):
     uid = message.from_user.id
     first_name = message.from_user.first_name if message.from_user.first_name else ""
     last_name = " " + message.from_user.last_name if message.from_user.last_name else ""
-    nickname = first_name + " " + last_name
+    nickname = first_name + last_name
     status = await insert_user(uid, nickname)
     if status:
         msg = NEW_USER_HELLO.format(nickname) + START_INFO
@@ -149,7 +146,6 @@ async def show_stats(message: types.Message):
 async def handle_start_button(message: types.Message):
     channel = await get_random_channel()
     summary = await get_summary(channel)
-    #text = f"{random.choice(ANSWERS)}\n@{channel}"
     text = f"@{channel}\n{summary}"
     bot_logger.log_user_event(
         message.from_user.id, "search channel", data={"Bot response": channel}
