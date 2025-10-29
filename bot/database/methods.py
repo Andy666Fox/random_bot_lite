@@ -141,6 +141,46 @@ async def _update_channel_avg_score(channelnick: str):
     except Exception as e:
         bot_logger.log_error(e, context={"update_avg_score_func_error": channelnick})
         return False
+    
+async def update_channel_summary(channelnick: str, summary: str):
+    try:
+        async with get_session() as session:
+            result = await session.execute(select(Channel).where(Channel.channelnick == channelnick))
+            channel = result.scalar_one_or_none()
+
+            if channel.summary:
+                return False 
+            
+            channel.summary = summary 
+            await session.commit()
+
+            bot_logger.log_system_event(
+                "channel summary updated",
+                data={
+                    "summary updated": f"{channelnick} summary updated"
+                },
+            )
+            return True
+        
+    except Exception as e:
+        print(f"Inserting failed: {e}")
+        bot_logger.log_error(e, context={"insert_channel_summary_func_error": e})
+        return False
+    
+async def get_channel_by_nick(channelnick: str):
+    try:
+        async with get_session() as session:
+            result = await session.execute(
+                select(Channel).where(Channel.channelnick == channelnick)
+            )
+            return result.scalar_one_or_none()
+        
+    except Exception as e:
+        print(f"Getting failed: {e}")
+        bot_logger.log_error(e, context={"get_channel_by_nick_func_error": e})
+        return False
+
+
 
 
 async def get_db_stats():

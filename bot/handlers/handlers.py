@@ -3,16 +3,15 @@ from aiogram.filters.command import Command, CommandObject
 from aiogram.types import CallbackQuery
 from database.methods import (
     get_db_stats,
-    get_random_channel,
     insert_suggested_channel,
     insert_user,
     update_channel_rating,
 )
 from keyboards.keyboards import get_channel_rating_inline_keyboard, get_main_keyboard
-from llm_manager.summary import get_summary
 from middlewares.middlewares import CooldownMW
 from service.admin_validation import is_admin
 from service.channel_validation import validate_channel
+from service.cache import get_channel_with_summary_from_cache
 from service.default_answers import (
     ADMIN_STATS_GATHER_TEMPLATE,
     ADMIN_VALIDATION_FAILED_MESSAGE,
@@ -144,14 +143,15 @@ async def show_stats(message: types.Message):
 
 @basic_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
-    channel = await get_random_channel()
-    summary = await get_summary(channel)
+    user_id = message.from_user.id
+    channel, summary = await get_channel_with_summary_from_cache(user_id)
     text = f"@{channel}\n{summary}"
+
     bot_logger.log_user_event(
-        message.from_user.id, "search channel", data={"Bot response": channel}
+        message.from_user.id, "search channel", data={f"Bot response to {message.from_user.username}": channel}
     )
 
-    await message.answer(text, reply_markup=get_channel_rating_inline_keyboard(channel))
+    await message.answer(text, reply_markup=get_channel_rating_inline_keyboard(channel), parse_mode='MarkdownV2')
 
 
 # Invalid content type reaction handler

@@ -15,6 +15,7 @@ class Channel(Base):
     channelnick = Column(String(50), unique=True, nullable=False, index=True)
     status = Column(Integer, default=1)
     avg_score = Column(Float, default=5.0)
+    summary = Column(String(250), default=None)
 
     ratings = relationship("Rating", back_populates="channel", cascade="all, delete-orphan")
 
