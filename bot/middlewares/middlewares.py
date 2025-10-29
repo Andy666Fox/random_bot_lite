@@ -4,8 +4,8 @@ from typing import Any
 
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from service.default_answers import ANSWER_TO_FLOOD
-from service.log_manager import bot_logger
+from utils.default_answers import ANSWER_TO_FLOOD
+from utils.log_manager import bot_logger
 
 
 class CooldownMW(BaseMiddleware):

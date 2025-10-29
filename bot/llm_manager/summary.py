@@ -3,8 +3,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from groq import Groq
-from service.default_answers import LLM_ROLE_DESCRIPTION
-from service.log_manager import bot_logger
+from utils.default_answers import LLM_ROLE_DESCRIPTION
+from utils.log_manager import bot_logger
 
 
 async def _get_channel_content(nickname: str):

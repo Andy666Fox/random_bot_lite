@@ -2,10 +2,12 @@ import asyncio
 import os
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums.parse_mode import ParseMode
 from database.schemas import create_tables
 from dotenv import load_dotenv
 from handlers.handlers import basic_router, decline_router
-from service.log_manager import bot_logger
+from utils.log_manager import bot_logger
 
 load_dotenv()
 
@@ -15,7 +17,7 @@ async def main():
 
     await create_tables()
 
-    bot = Bot(token=os.getenv("BOT_TOKEN"))
+    bot = Bot(token=os.getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN_V2))
     dp = Dispatcher()
 
     dp.include_routers(basic_router, decline_router)

@@ -1,6 +1,6 @@
 import os
 
-from service.log_manager import bot_logger
+from utils.log_manager import bot_logger
 from sqlalchemy import BigInteger, Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base

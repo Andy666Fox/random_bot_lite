@@ -1,8 +1,8 @@
 import random
 from datetime import UTC, datetime, timedelta
 
-from service.bayesian_avarage import get_bavg_score
-from service.log_manager import bot_logger
+from utils.bayesian_avarage import get_bavg_score
+from utils.log_manager import bot_logger
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import text

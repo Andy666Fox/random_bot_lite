@@ -9,10 +9,10 @@ from database.methods import (
 )
 from keyboards.keyboards import get_channel_rating_inline_keyboard, get_main_keyboard
 from middlewares.middlewares import CooldownMW
-from service.admin_validation import is_admin
-from service.channel_validation import validate_channel
-from service.cache import get_channel_with_summary_from_cache
-from service.default_answers import (
+from utils.admin_validation import is_admin
+from utils.channel_validation import validate_channel
+from utils.cache import get_channel_with_summary_from_cache
+from utils.default_answers import (
     ADMIN_STATS_GATHER_TEMPLATE,
     ADMIN_VALIDATION_FAILED_MESSAGE,
     ANSWER_TO_MEDIA,
@@ -29,7 +29,7 @@ from service.default_answers import (
     SUGGEST_FAIL,
     SUGGEST_SUCCESS,
 )
-from service.log_manager import bot_logger
+from utils.log_manager import bot_logger
 
 # bot have two types of routers
 # DECLINE routers react for invalid messages (message types)
@@ -151,7 +151,7 @@ async def handle_start_button(message: types.Message):
         message.from_user.id, "search channel", data={f"Bot response to {message.from_user.username}": channel}
     )
 
-    await message.answer(text, reply_markup=get_channel_rating_inline_keyboard(channel), parse_mode='MarkdownV2')
+    await message.answer(text, reply_markup=get_channel_rating_inline_keyboard(channel))
 
 
 # Invalid content type reaction handler

@@ -1,6 +1,6 @@
 import requests
 
-from service.log_manager import bot_logger
+from utils.log_manager import bot_logger
 
 
 async def validate_channel(channelnick: str) -> bool:
