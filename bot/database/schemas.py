@@ -1,10 +1,10 @@
 import os
 
-from utils.log_manager import log_manager
 from sqlalchemy import BigInteger, Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from utils.log_manager import log_manager
 
 Base = declarative_base()
 

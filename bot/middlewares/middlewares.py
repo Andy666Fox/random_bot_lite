@@ -4,8 +4,8 @@ from typing import Any
 
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from utils.message_manager import message_manager
 from utils.log_manager import log_manager
+from utils.message_manager import message_manager
 
 
 class CooldownMW(BaseMiddleware):

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
-class BotAnswers():
+class BotAnswers:
     ANSWERS = [
         "📺 Вот например:",
         "🔍 А как тебе этот:",

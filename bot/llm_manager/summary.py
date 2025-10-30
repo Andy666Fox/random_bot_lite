@@ -53,4 +53,4 @@ async def get_summary(nickname: str):
             return None
     except Exception as e:
         log_manager.log_error(e, context={"get_summary_func_error": str(e)})
-        return {}
+        return "Описание временно недоступно"

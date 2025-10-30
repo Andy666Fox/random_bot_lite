@@ -1,11 +1,11 @@
 import random
 from datetime import UTC, datetime, timedelta
 
-from utils.math_manager import math_manager
-from utils.log_manager import log_manager
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import text
+from utils.log_manager import log_manager
+from utils.math_manager import math_manager
 
 from database.schemas import Channel, Rating, User
 from database.session_gen import get_session
@@ -141,7 +141,7 @@ async def _update_channel_avg_score(channelnick: str):
     except Exception as e:
         log_manager.log_error(e, context={"update_avg_score_func_error": channelnick})
         return False
-    
+
 async def update_channel_summary(channelnick: str, summary: str):
     try:
         async with get_session() as session:
@@ -149,9 +149,9 @@ async def update_channel_summary(channelnick: str, summary: str):
             channel = result.scalar_one_or_none()
 
             if channel.summary:
-                return False 
-            
-            channel.summary = summary 
+                return False
+
+            channel.summary = summary
             await session.commit()
 
             log_manager.log_system_event(
@@ -161,12 +161,12 @@ async def update_channel_summary(channelnick: str, summary: str):
                 },
             )
             return True
-        
+
     except Exception as e:
         print(f"Inserting failed: {e}")
         log_manager.log_error(e, context={"insert_channel_summary_func_error": e})
         return False
-    
+
 async def get_channel_by_nick(channelnick: str):
     try:
         async with get_session() as session:
@@ -174,7 +174,7 @@ async def get_channel_by_nick(channelnick: str):
                 select(Channel).where(Channel.channelnick == channelnick)
             )
             return result.scalar_one_or_none()
-        
+
     except Exception as e:
         print(f"Getting failed: {e}")
         log_manager.log_error(e, context={"get_channel_by_nick_func_error": e})
