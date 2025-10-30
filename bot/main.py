@@ -6,8 +6,8 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums.parse_mode import ParseMode
 from database.schemas import create_tables
 from dotenv import load_dotenv
-from handlers.handlers import basic_router, decline_router
-from utils.log_manager import bot_logger
+from bot.handlers.routers import basic_router, decline_router
+from utils.log_manager import log_manager
 
 load_dotenv()
 
@@ -23,7 +23,7 @@ async def main():
     dp.include_routers(basic_router, decline_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
-    bot_logger.log_system_event("Bot initialized")
+    log_manager.log_system_event("Bot initialized")
     await dp.start_polling(bot)
 
 
@@ -31,4 +31,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        bot_logger.log_system_event("Bot stopping")
+        log_manager.log_system_event("Bot stopping")

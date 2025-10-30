@@ -1,6 +1,6 @@
 import os
 
-from utils.log_manager import bot_logger
+from utils.log_manager import log_manager
 from sqlalchemy import BigInteger, Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -49,4 +49,4 @@ engine = create_async_engine(
 async def create_tables():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        bot_logger.log_system_event("DB tables created")
+        log_manager.log_system_event("DB tables created")

@@ -1,8 +1,8 @@
 import random
 from datetime import UTC, datetime, timedelta
 
-from utils.bayesian_avarage import get_bavg_score
-from utils.log_manager import bot_logger
+from utils.math_manager import math_manager
+from utils.log_manager import log_manager
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import text
@@ -36,7 +36,7 @@ async def get_random_channel():
 
     except Exception as e:
         print(f"Processing failed: {e}")
-        bot_logger.log_error(e, context={"get_random_channel_func_error": e})
+        log_manager.log_error(e, context={"get_random_channel_func_error": e})
         return None
 
 
@@ -52,7 +52,7 @@ async def insert_suggested_channel(channelnick: str):
         return False, "exists"
     except Exception as e:
         print(f"Inserting failed: {e}")
-        bot_logger.log_error(e, context={"insert_suggested_channel_func_error": e})
+        log_manager.log_error(e, context={"insert_suggested_channel_func_error": e})
         return False, "error"
 
 
@@ -76,7 +76,7 @@ async def insert_user(user_id: int, nickname: str):
                 return True
     except Exception as e:
         print(f"Inserting failed: {e}")
-        bot_logger.log_error(e, context={"insert_user_func_error": e})
+        log_manager.log_error(e, context={"insert_user_func_error": e})
         return False
 
 
@@ -111,7 +111,7 @@ async def update_channel_rating(channelnick: str, score: int):
             await _update_channel_avg_score(channelnick)
             return True
     except Exception as e:
-        bot_logger.log_error(e, context={"update_channel_rating_func_error": e})
+        log_manager.log_error(e, context={"update_channel_rating_func_error": e})
         return False
 
 
@@ -126,8 +126,8 @@ async def _update_channel_avg_score(channelnick: str):
 
             row = result.first()
             channel, rating = row
-            bscore = get_bavg_score(rating.likes, rating.dislikes)
-            bot_logger.log_system_event(
+            bscore = math_manager.get_bavg_score(rating.likes, rating.dislikes)
+            log_manager.log_system_event(
                 "channel score updated",
                 data={
                     "channel score": f"{channelnick} score changed from \
@@ -139,7 +139,7 @@ async def _update_channel_avg_score(channelnick: str):
             await session.commit()
         return True
     except Exception as e:
-        bot_logger.log_error(e, context={"update_avg_score_func_error": channelnick})
+        log_manager.log_error(e, context={"update_avg_score_func_error": channelnick})
         return False
     
 async def update_channel_summary(channelnick: str, summary: str):
@@ -154,7 +154,7 @@ async def update_channel_summary(channelnick: str, summary: str):
             channel.summary = summary 
             await session.commit()
 
-            bot_logger.log_system_event(
+            log_manager.log_system_event(
                 "channel summary updated",
                 data={
                     "summary updated": f"{channelnick} summary updated"
@@ -164,7 +164,7 @@ async def update_channel_summary(channelnick: str, summary: str):
         
     except Exception as e:
         print(f"Inserting failed: {e}")
-        bot_logger.log_error(e, context={"insert_channel_summary_func_error": e})
+        log_manager.log_error(e, context={"insert_channel_summary_func_error": e})
         return False
     
 async def get_channel_by_nick(channelnick: str):
@@ -177,7 +177,7 @@ async def get_channel_by_nick(channelnick: str):
         
     except Exception as e:
         print(f"Getting failed: {e}")
-        bot_logger.log_error(e, context={"get_channel_by_nick_func_error": e})
+        log_manager.log_error(e, context={"get_channel_by_nick_func_error": e})
         return False
 
 
@@ -204,5 +204,5 @@ async def get_db_stats():
 
             return [total_channels, active_status_ratio, total_users, active_users]
     except Exception as e:
-        bot_logger.log_error(e, context={"get_db_stats_func_error": str(e)})
+        log_manager.log_error(e, context={"get_db_stats_func_error": str(e)})
         return {}

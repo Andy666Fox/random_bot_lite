@@ -3,8 +3,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from groq import Groq
-from utils.default_answers import LLM_ROLE_DESCRIPTION
-from utils.log_manager import bot_logger
+from utils.globals import LLM_ROLE_DESCRIPTION
+from utils.log_manager import log_manager
 
 
 async def _get_channel_content(nickname: str):
@@ -18,7 +18,7 @@ async def _get_channel_content(nickname: str):
         else:
             return None
     except Exception as e:
-        bot_logger.log_error(e, context={"_get_channel_content_func_error": str(e)})
+        log_manager.log_error(e, context={"_get_channel_content_func_error": str(e)})
         return {}
 
 
@@ -39,7 +39,7 @@ async def _get_llm_answer(content: str):
         answer = chat_completion.choices[0].message.content
         return answer
     except Exception as e:
-        bot_logger.log_error(e, context={"_get_llm_answer_func_error": str(e)})
+        log_manager.log_error(e, context={"_get_llm_answer_func_error": str(e)})
         return {}
 
 
@@ -52,5 +52,5 @@ async def get_summary(nickname: str):
         else:
             return None
     except Exception as e:
-        bot_logger.log_error(e, context={"get_summary_func_error": str(e)})
+        log_manager.log_error(e, context={"get_summary_func_error": str(e)})
         return {}

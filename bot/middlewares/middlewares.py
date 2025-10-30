@@ -4,8 +4,8 @@ from typing import Any
 
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from utils.default_answers import ANSWER_TO_FLOOD
-from utils.log_manager import bot_logger
+from utils.message_manager import message_manager
+from utils.log_manager import log_manager
 
 
 class CooldownMW(BaseMiddleware):
@@ -33,8 +33,8 @@ class CooldownMW(BaseMiddleware):
         last_action = self.user_last_action.get(user_id)
 
         if last_action and (current_time - last_action) < self.cooldown:
-            await event.answer(ANSWER_TO_FLOOD)
-            bot_logger.log_user_event(
+            await event.answer(message_manager.ANSWER_TO_FLOOD)
+            log_manager.log_user_event(
                 user_id, "spaming", data={"time_window": current_time - last_action}
             )
             return
