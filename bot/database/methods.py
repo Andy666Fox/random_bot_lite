@@ -126,7 +126,7 @@ async def _update_channel_avg_score(channelnick: str):
 
             row = result.first()
             channel, rating = row
-            bscore = math_manager.get_bavg_score(rating.likes, rating.dislikes)
+            bscore = await math_manager.get_bavg_score(rating.likes, rating.dislikes)
             log_manager.log_system_event(
                 "channel score updated",
                 data={

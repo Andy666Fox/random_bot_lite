@@ -8,7 +8,7 @@ from database.methods import get_db_stats
 
 @basic_router.message(Command("stats"))
 async def show_stats(message: types.Message):
-    if not validation_manager.is_admin(message.from_user.id):
+    if not await validation_manager.is_admin(message.from_user.id):
         await message.answer(message_manager.ADMIN_VALIDATION_FAILED_MESSAGE)
         log_manager.log_user_event(
             message.from_user.id, "db stats requested", data={"is_admin": False}

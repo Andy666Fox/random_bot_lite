@@ -6,7 +6,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums.parse_mode import ParseMode
 from database.schemas import create_tables
 from dotenv import load_dotenv
-from bot.handlers.routers import basic_router, decline_router
+from handlers.routers import basic_router, decline_router
 from utils.log_manager import log_manager
 
 load_dotenv()

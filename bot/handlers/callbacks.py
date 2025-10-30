@@ -2,7 +2,7 @@ from aiogram.types import CallbackQuery
 from aiogram import F
 from routers import basic_router
 from database.methods import update_channel_rating
-from bot.utils.message_manager import message_manager
+from utils.message_manager import message_manager
 from utils.log_manager import log_manager
 
 

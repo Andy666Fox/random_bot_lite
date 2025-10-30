@@ -2,7 +2,7 @@ from routers import decline_router
 from aiogram import types, F
 from utils.globals import BLOCKED_CONTENT_TYPES
 
-from bot.utils.message_manager import message_manager
+from utils.message_manager import message_manager
 from utils.log_manager import log_manager
 
 
