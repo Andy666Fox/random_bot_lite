@@ -1,9 +1,11 @@
 import random
 from asyncio import Lock
 from collections import defaultdict
+
 from cachetools import LRUCache
 from database.methods import get_channel_by_nick, get_random_channel, update_channel_summary
 from llm_manager.summary import get_summary
+
 from utils.log_manager import log_manager
 
 
@@ -51,7 +53,7 @@ class CacheManager:
 
         async with self.cache_lock:
             if new_channel_nick in self.user_history[user_id]:
-                 pass 
+                 pass
 
             if new_channel_nick in self.channel_cache:
                 summary = self.channel_cache[new_channel_nick]

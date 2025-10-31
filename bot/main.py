@@ -1,12 +1,10 @@
 import asyncio
 import os
 
-from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums.parse_mode import ParseMode
+from aiogram import Bot
 from database.schemas import create_tables
+from dispatcher import dp
 from dotenv import load_dotenv
-from handlers.handlers import basic_router, decline_router
 from utils.log_manager import log_manager
 
 load_dotenv()
@@ -18,9 +16,6 @@ async def main():
     await create_tables()
 
     bot = Bot(token=os.getenv("BOT_TOKEN")) #, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN_V2)
-    dp = Dispatcher()
-
-    dp.include_routers(basic_router, decline_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     log_manager.log_system_event("Bot initialized")

@@ -1,26 +1,16 @@
 from aiogram import F, Router, types
 from aiogram.filters.command import Command, CommandObject
-from database.methods import (
-    get_db_stats,
-    insert_suggested_channel,
-    insert_user,
-    update_channel_rating
-)
-from keyboards.builder import get_channel_rating_inline_keyboard, get_main_keyboard
+from database.methods import insert_suggested_channel, insert_user, update_channel_rating
+from keyboards.builder import get_main_keyboard
 from middlewares.middlewares import CooldownMW
-from utils.cache_manager import cache_manager
-from utils.globals import BLOCKED_CONTENT_TYPES
 from utils.log_manager import log_manager
 from utils.message_manager import message_manager
 from utils.validation_manager import validation_manager
 
-decline_router = Router()
-basic_router = Router()
-decline_router.message.middleware(CooldownMW())
-basic_router.message.middleware(CooldownMW())
+user_commands_router = Router()
+user_commands_router.message.middleware(CooldownMW())
 
-
-@basic_router.callback_query(F.data.startswith("rate:"))
+@user_commands_router.callback_query(F.data.startswith("rate:"))
 async def handle_rating_callback(callback: types.CallbackQuery):
     await callback.message.edit_reply_markup(reply_markup=None)
     try:
@@ -45,7 +35,7 @@ async def handle_rating_callback(callback: types.CallbackQuery):
     except Exception as e:
         log_manager.log_error(e, context={"handle_rating_callback_func_error": e})
 
-@basic_router.message(Command("start"))
+@user_commands_router.message(Command("start"))
 async def send_welcome(message: types.Message):
     uid = message.from_user.id
     first_name = message.from_user.first_name if message.from_user.first_name else ""
@@ -60,7 +50,7 @@ async def send_welcome(message: types.Message):
     await message.answer(msg, reply_markup=get_main_keyboard())
 
 
-@basic_router.message(Command("extra"))
+@user_commands_router.message(Command("extra"))
 async def send_extra_commands(message: types.Message):
     log_manager.log_user_event(
         message.from_user.id,
@@ -70,7 +60,7 @@ async def send_extra_commands(message: types.Message):
     await message.answer(message_manager.EXTRA_COMMANDS_DESCRIPTION)
 
 
-@basic_router.message(Command("suggest"))
+@user_commands_router.message(Command("suggest"))
 async def suggest_channel(message: types.Message, command: CommandObject):
     if not command.args:
         await message.answer(message_manager.EMPTY_SUGGEST_ARGS)
@@ -100,47 +90,3 @@ async def suggest_channel(message: types.Message, command: CommandObject):
         "suggest",
         data={"User suggested channel": channelnick, "insert_status": status},
     )
-
-@basic_router.message(Command("stats"))
-async def show_stats(message: types.Message):
-    uid = message.from_user.id
-    print(uid)
-    if not await validation_manager.is_admin(uid):
-        await message.answer(message_manager.ADMIN_VALIDATION_FAILED_MESSAGE)
-        log_manager.log_user_event(
-            uid, "db stats requested", data={"is_admin": False}
-        )
-        return
-    else:
-        stats = await get_db_stats()
-        msg = message_manager.ADMIN_STATS_GATHER_TEMPLATE.format(stats[0], stats[1], stats[2], stats[3])
-        await message.answer(msg)
-
-    log_manager.log_user_event(message.from_user.id, "db stats requested", data={"is_admin": True})
-
-
-@basic_router.message(F.text == "Найти канал")
-async def handle_start_button(message: types.Message):
-    user_id = message.from_user.id
-    channel, summary = await cache_manager.get_channel_with_summary_from_cache(user_id)
-    text = f"@{channel}\n{summary}"
-
-    log_manager.log_user_event(
-        user_id, "search channel", data={f"Bot response to {message.from_user.username}": channel}
-    )
-
-    await message.answer(text, reply_markup=get_channel_rating_inline_keyboard(channel))
-
-@decline_router.message(F.content_type.in_(BLOCKED_CONTENT_TYPES))
-async def handle_blocked_content(message: types.Message):
-    await message.delete()
-    log_manager.log_user_event(message.from_user.id, "wrong media type")
-    await message.answer(message_manager.ANSWER_TO_MEDIA)
-
-
-# Invalid text command handler
-@decline_router.message(F.text)
-async def default_response(message: types.Message):
-    await message.answer(message_manager.ANSWER_TO_WRONG_TEXT)
-    log_manager.log_user_event(message.from_user.id, f"User entry: {str(message.text)}")
-    await message.delete()
