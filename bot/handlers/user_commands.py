@@ -10,6 +10,7 @@ from utils.validation_manager import validation_manager
 user_commands_router = Router()
 user_commands_router.message.middleware(CooldownMW())
 
+
 @user_commands_router.callback_query(F.data.startswith("rate:"))
 async def handle_rating_callback(callback: types.CallbackQuery):
     await callback.message.edit_reply_markup(reply_markup=None)
@@ -34,6 +35,7 @@ async def handle_rating_callback(callback: types.CallbackQuery):
             )
     except Exception as e:
         log_manager.log_error(e, context={"handle_rating_callback_func_error": e})
+
 
 @user_commands_router.message(Command("start"))
 async def send_welcome(message: types.Message):

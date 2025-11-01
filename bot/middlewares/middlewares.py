@@ -26,12 +26,12 @@ class CooldownMW(BaseMiddleware):
         # Safely get handler name with better exception handling
         handler_name = "unknown_handler"
         try:
-            if hasattr(handler, '__name__'):
+            if hasattr(handler, "__name__"):
                 handler_name = handler.__name__
-            elif hasattr(handler, 'func'):
-                handler_name = getattr(handler.func, '__name__', 'unknown_handler')
-            elif hasattr(handler, '__func__'):
-                handler_name = getattr(handler.__func__, '__name__', 'unknown_handler')
+            elif hasattr(handler, "func"):
+                handler_name = getattr(handler.func, "__name__", "unknown_handler")
+            elif hasattr(handler, "__func__"):
+                handler_name = getattr(handler.__func__, "__name__", "unknown_handler")
         except Exception:
             # If we can't determine the handler name, continue without it
             pass
@@ -41,7 +41,9 @@ class CooldownMW(BaseMiddleware):
         if last_action and (current_time - last_action) < self.cooldown:
             await event.answer(message_manager.ANSWER_TO_FLOOD)
             log_manager.log_user_event(
-                user_id, "spamming", data={"time_window": current_time - last_action, "in handler": handler_name}
+                user_id,
+                "spamming",
+                data={"time_window": current_time - last_action, "in handler": handler_name},
             )
             return
 

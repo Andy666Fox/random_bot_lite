@@ -11,7 +11,7 @@ from database.schemas import Channel, Rating, User
 from database.session_gen import get_session
 
 
-async def get_random_channel():
+async def get_random_channel(limit: int = 1):
     try:
         async with get_session() as session:
             min_max_result = await session.execute(text("SELECT MIN(id), MAX(id) FROM channels"))
@@ -26,7 +26,7 @@ async def get_random_channel():
                 select(Channel.channelnick)
                 .where(Channel.id >= random_id)
                 .order_by(Channel.id)
-                .limit(1)
+                .limit(limit)
             )
             result = await session.execute(stmt)
             channel = result.scalar_one_or_none()
@@ -142,10 +142,13 @@ async def _update_channel_avg_score(channelnick: str):
         log_manager.log_error(e, context={"update_avg_score_func_error": channelnick})
         return False
 
+
 async def update_channel_summary(channelnick: str, summary: str):
     try:
         async with get_session() as session:
-            result = await session.execute(select(Channel).where(Channel.channelnick == channelnick))
+            result = await session.execute(
+                select(Channel).where(Channel.channelnick == channelnick)
+            )
             channel = result.scalar_one_or_none()
 
             if channel.summary:
@@ -156,9 +159,7 @@ async def update_channel_summary(channelnick: str, summary: str):
 
             log_manager.log_system_event(
                 "channel summary updated",
-                data={
-                    "summary updated": f"{channelnick} summary updated"
-                },
+                data={"summary updated": f"{channelnick} summary updated"},
             )
             return True
 
@@ -166,6 +167,7 @@ async def update_channel_summary(channelnick: str, summary: str):
         print(f"Inserting failed: {e}")
         log_manager.log_error(e, context={"insert_channel_summary_func_error": e})
         return False
+
 
 async def get_channel_by_nick(channelnick: str):
     try:
@@ -179,8 +181,6 @@ async def get_channel_by_nick(channelnick: str):
         print(f"Getting failed: {e}")
         log_manager.log_error(e, context={"get_channel_by_nick_func_error": e})
         return False
-
-
 
 
 async def get_db_stats():

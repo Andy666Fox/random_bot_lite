@@ -1,12 +1,9 @@
-
-
-
 class MathManager:
     def __init__(self):
         pass
 
-    async def get_bavg_score(self,
-    likes: int, dislikes: int, prior_likes: int = 5, prior_dislikes: int = 5
+    async def get_bavg_score(
+        self, likes: int, dislikes: int, prior_likes: int = 5, prior_dislikes: int = 5
     ) -> float:
         total_likes = likes + prior_likes
         total_votes = likes + dislikes + prior_likes + prior_dislikes

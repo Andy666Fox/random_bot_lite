@@ -9,6 +9,7 @@ from utils.message_manager import message_manager
 user_router = Router()
 user_router.message.middleware(CooldownMW())
 
+
 @user_router.message(F.text == "Найти канал")
 async def handle_start_button(message: types.Message):
     user_id = message.from_user.id
@@ -20,6 +21,7 @@ async def handle_start_button(message: types.Message):
     )
 
     await message.answer(text, reply_markup=get_channel_rating_inline_keyboard(channel))
+
 
 @user_router.message(F.content_type.in_(BLOCKED_CONTENT_TYPES))
 async def handle_blocked_content(message: types.Message):

@@ -17,12 +17,12 @@ LLM_ROLE_DESCRIPTION = """Ты жесткий, саркастичный, ком�
                             Ответ строго по формату. Без вступлений, без "вот описание", просто текст по пунктам."""
 
 BLOCKED_CONTENT_TYPES = [
-        ContentType.PHOTO,
-        ContentType.VIDEO,
-        ContentType.DOCUMENT,
-        ContentType.AUDIO,
-        ContentType.VOICE,
-        ContentType.VIDEO_NOTE,
-        ContentType.STICKER,
-        ContentType.ANIMATION,
-    ]
+    ContentType.PHOTO,
+    ContentType.VIDEO,
+    ContentType.DOCUMENT,
+    ContentType.AUDIO,
+    ContentType.VOICE,
+    ContentType.VIDEO_NOTE,
+    ContentType.STICKER,
+    ContentType.ANIMATION,
+]

@@ -65,4 +65,5 @@ class BotAnswers:
 
     ANSWER_TO_FLOOD = "⛔ Отставить спам, погоди пару секунд ⏱️"
 
+
 message_manager = BotAnswers()
