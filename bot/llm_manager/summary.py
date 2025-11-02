@@ -3,7 +3,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from groq import Groq
-from utils.globals import LLM_ROLE_DESCRIPTION
+from utils.globals import LLM_ROLE_DESCRIPTION, LLM_FAIL_DEFAULT_ANSWER
 from utils.log_manager import log_manager
 
 
@@ -40,7 +40,7 @@ async def _get_llm_answer(content: str):
         return answer
     except Exception as e:
         log_manager.log_error(e, context={"_get_llm_answer_func_error": str(e)})
-        return {}
+        return LLM_FAIL_DEFAULT_ANSWER
 
 
 async def get_summary(nickname: str):

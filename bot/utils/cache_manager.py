@@ -79,9 +79,10 @@ class CacheManager:
             summary = db_channel.summary
         else:
             summary = await get_summary(new_channel_nick)
-            if len(summary) < 50:
+            if len(summary) < 50 or len(summary) >500:
                 summary = None
             await update_channel_summary(new_channel_nick, summary)
+            log_manager.log_system_event("summary parameters")
 
         async with self.cache_lock:
             self.channel_cache[new_channel_nick] = summary
