@@ -1,6 +1,7 @@
-from utils.log_manager import log_manager
 import requests
 from bs4 import BeautifulSoup
+
+from utils.log_manager import log_manager
 
 class MathManager:
     def __init__(self):

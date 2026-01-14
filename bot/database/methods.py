@@ -4,9 +4,9 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import text
+
 from utils.log_manager import log_manager
 from utils.math_manager import math_manager
-
 from database.schemas import Channel, Rating, User
 from database.session_gen import get_session
 

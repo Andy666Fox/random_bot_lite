@@ -1,6 +1,8 @@
-from wordcloud import WordCloud
 import io
 import re
+
+from wordcloud import WordCloud
+
 from utils.globals import STOP_WORDS
 
 def _get_wordcloud_image(text: str, width=800, height=400) -> bytes:

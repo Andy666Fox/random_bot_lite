@@ -3,7 +3,7 @@ import os
 
 from aiogram import Bot
 from database.schemas import create_tables
-import handlers
+import handlers # do not delete this import. Loads routers
 from dispatcher import dp
 from dotenv import load_dotenv
 from utils.log_manager import log_manager

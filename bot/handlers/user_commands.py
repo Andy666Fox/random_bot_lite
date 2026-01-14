@@ -1,5 +1,6 @@
 from aiogram import F, Router, types
 from aiogram.filters.command import Command, CommandObject
+
 from database.methods import insert_suggested_channel, insert_user, update_channel_rating
 from keyboards.builder import get_main_keyboard
 from middlewares.middlewares import CooldownMW

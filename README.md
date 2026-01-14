@@ -12,7 +12,7 @@ A bot that can tell you about hundreds of thousands of Telegram channels. Helps 
 ## ✨ Features
 
 - **Random channels** - get suggestions for interesting Telegram channels
-- **LLM summary** - Provides a brief summary of the topic, audience, and activity
+- **WordCloud** - generate wordcloud for given channel by his content
 - **Simple interface** - clear commands and quick responses
 
 ## 🛠 Tech Stack

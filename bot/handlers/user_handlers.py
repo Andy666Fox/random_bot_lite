@@ -1,13 +1,14 @@
 from aiogram import F, Router, types
 from aiogram.types import BufferedInputFile, LinkPreviewOptions
+
 from keyboards.builder import get_channel_rating_inline_keyboard
+
 from middlewares.middlewares import CooldownMW
 from utils.globals import BLOCKED_CONTENT_TYPES
 from utils.log_manager import log_manager
 from utils.message_manager import message_manager
 from utils.math_manager import math_manager
 from database.methods import get_random_channel
-
 from wc_manager.wordcloud_gen import _get_wordcloud_image
 
 user_router = Router()
