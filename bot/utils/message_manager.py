@@ -3,15 +3,6 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class BotAnswers:
-    ANSWERS = [
-        "📺 Вот например:",
-        "🔍 А как тебе этот:",
-        "💡 Что насчет этого:",
-        "👀 Ну вот собсна:",
-        "🎯 Смари чо нашел:",
-        "✨ Вот что попалось:",
-    ]
-
     NEW_USER_HELLO = "👋 Привет {}, вижу вы тут недавно\n📖 Ознакомтесь пожалуйста\n"
     OLD_USER_HELLO = "👋 Здарова {}, позволь напомнить\n"
 
