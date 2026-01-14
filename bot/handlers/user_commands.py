@@ -16,7 +16,6 @@ async def handle_rating_callback(callback: types.CallbackQuery):
     await callback.message.edit_reply_markup(reply_markup=None)
     try:
         _, action, channelnick = callback.data.split(":", 2)
-        print()
         score = 1 if action == "like" else -1
         success = await update_channel_rating(channelnick, score)
         if success:
@@ -35,7 +34,6 @@ async def handle_rating_callback(callback: types.CallbackQuery):
             )
     except Exception as e:
         log_manager.log_error(e, context={"handle_rating_callback_func_error": e})
-
 
 @user_commands_router.message(Command("start"))
 async def send_welcome(message: types.Message):

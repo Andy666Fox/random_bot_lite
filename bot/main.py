@@ -3,12 +3,12 @@ import os
 
 from aiogram import Bot
 from database.schemas import create_tables
+import handlers
 from dispatcher import dp
 from dotenv import load_dotenv
 from utils.log_manager import log_manager
 
 load_dotenv()
-
 
 async def main():
     """Main entry point. Initiate logging, api-keys, routers, history control, polling"""
