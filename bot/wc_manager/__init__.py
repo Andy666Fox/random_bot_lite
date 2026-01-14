@@ -1,0 +1,1 @@
+# module for generate wordcloud for given channel by his content

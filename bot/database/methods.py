@@ -1,37 +1,42 @@
 import random
 from datetime import UTC, datetime, timedelta
 
-from service.bayesian_avarage import get_bavg_score
-from service.log_manager import bot_logger
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import selectinload
 from sqlalchemy.sql.expression import text
 
+from utils.log_manager import log_manager
+from utils.math_manager import math_manager
 from database.schemas import Channel, Rating, User
 from database.session_gen import get_session
 
 
-async def get_random_channel():
+async def get_random_channel(limit: int = 1):
     try:
         async with get_session() as session:
-            max_rowid_result = await session.execute(text("SELECT MAX(ROWID) FROM channels"))
-            max_rowid = max_rowid_result.scalar()
+            min_max_result = await session.execute(text("SELECT MIN(id), MAX(id) FROM channels"))
+            min_id, max_id = min_max_result.fetchone()
 
-            if not max_rowid:
+            if min_id is None or max_id is None:
                 return None
 
-            while True:
-                random_rowid = random.randint(1, max_rowid)
-                stmt = select(Channel.channelnick).where(Channel.id == random_rowid)
-                result = await session.execute(stmt)
-                channel = result.scalar_one_or_none()
-                if channel:
-                    return channel
+            random_id = random.randint(min_id, max_id)
+
+            stmt = (
+                select(Channel.channelnick)
+                .where(Channel.id >= random_id)
+                .order_by(Channel.id)
+                .limit(limit)
+            )
+            result = await session.execute(stmt)
+            channel = result.scalar_one_or_none()
+
+            if channel:
+                return channel
 
     except Exception as e:
         print(f"Processing failed: {e}")
-        bot_logger.log_error(e, context={"get_random_channel_func_error": e})
+        log_manager.log_error(e, context={"get_random_channel_func_error": e})
         return None
 
 
@@ -47,7 +52,7 @@ async def insert_suggested_channel(channelnick: str):
         return False, "exists"
     except Exception as e:
         print(f"Inserting failed: {e}")
-        bot_logger.log_error(e, context={"insert_suggested_channel_func_error": e})
+        log_manager.log_error(e, context={"insert_suggested_channel_func_error": e})
         return False, "error"
 
 
@@ -71,7 +76,7 @@ async def insert_user(user_id: int, nickname: str):
                 return True
     except Exception as e:
         print(f"Inserting failed: {e}")
-        bot_logger.log_error(e, context={"insert_user_func_error": e})
+        log_manager.log_error(e, context={"insert_user_func_error": e})
         return False
 
 
@@ -79,31 +84,34 @@ async def update_channel_rating(channelnick: str, score: int):
     try:
         async with get_session() as session:
             result = await session.execute(
-                select(Channel)
-                .options(selectinload(Channel.ratings))
+                select(Channel, Rating)
+                .join(Rating, Channel.id == Rating.channel_id, isouter=True)  # LEFT JOIN
                 .where(Channel.channelnick == channelnick)
             )
+            row = result.first()
 
-            channel = result.scalar_one_or_none()
+            channel, rating = row
 
-            if channel.ratings:
-                rating = channel[0]
+            if rating is None:
+                new_rating = Rating(
+                    channel_id=channel.id,
+                    likes=5 if score == 1 else 4,  # Инициализация
+                    dislikes=5 if score == -1 else 4,
+                )
+                session.add(new_rating)
+                await session.flush()
+                rating = new_rating
             else:
-                rating = Rating(channel_id=channel.id, likes=5, dislikes=5)
-                session.add(rating)
-
-            if score == 1:
-                rating.likes += 1
-            elif score == -1:
-                rating.dislikes += 1
-            else:
-                pass
+                if score == 1:
+                    rating.likes += 1
+                elif score == -1:
+                    rating.dislikes += 1
 
             await session.commit()
             await _update_channel_avg_score(channelnick)
             return True
     except Exception as e:
-        bot_logger.log_error(e, context={"update_channel_rating_func_error": e})
+        log_manager.log_error(e, context={"update_channel_rating_func_error": e})
         return False
 
 
@@ -118,12 +126,12 @@ async def _update_channel_avg_score(channelnick: str):
 
             row = result.first()
             channel, rating = row
-            bscore = get_bavg_score(rating.likes, rating.dislikes)
-            bot_logger.log_system_event(
+            bscore = await math_manager.get_bavg_score(rating.likes, rating.dislikes)
+            log_manager.log_system_event(
                 "channel score updated",
                 data={
                     "channel score": f"{channelnick} score changed from \
-                                      {channel.avg_score} to {bscore}"
+                                       {channel.avg_score} to {bscore}"
                 },
             )
 
@@ -131,7 +139,47 @@ async def _update_channel_avg_score(channelnick: str):
             await session.commit()
         return True
     except Exception as e:
-        bot_logger.log_error(e, context={"update_avg_score_func_error": channelnick})
+        log_manager.log_error(e, context={"update_avg_score_func_error": channelnick})
+        return False
+
+
+async def update_channel_summary(channelnick: str, summary: str):
+    try:
+        async with get_session() as session:
+            result = await session.execute(
+                select(Channel).where(Channel.channelnick == channelnick)
+            )
+            channel = result.scalar_one_or_none()
+
+            if channel.summary:
+                return False
+
+            channel.summary = summary
+            await session.commit()
+
+            log_manager.log_system_event(
+                "channel summary updated",
+                data={"summary updated": f"{channelnick} summary updated"},
+            )
+            return True
+
+    except Exception as e:
+        print(f"Inserting failed: {e}")
+        log_manager.log_error(e, context={"insert_channel_summary_func_error": e})
+        return False
+
+
+async def get_channel_by_nick(channelnick: str):
+    try:
+        async with get_session() as session:
+            result = await session.execute(
+                select(Channel).where(Channel.channelnick == channelnick)
+            )
+            return result.scalar_one_or_none()
+
+    except Exception as e:
+        print(f"Getting failed: {e}")
+        log_manager.log_error(e, context={"get_channel_by_nick_func_error": e})
         return False
 
 
@@ -156,5 +204,5 @@ async def get_db_stats():
 
             return [total_channels, active_status_ratio, total_users, active_users]
     except Exception as e:
-        bot_logger.log_error(e, context={"get_db_stats_func_error": str(e)})
+        log_manager.log_error(e, context={"get_db_stats_func_error": str(e)})
         return {}

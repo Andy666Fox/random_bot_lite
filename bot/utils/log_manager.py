@@ -56,4 +56,4 @@ class BotLoger:
         self._log("system_event", {"event_type": event_type, "data": data})
 
 
-bot_logger = BotLoger()
+log_manager = BotLoger()
