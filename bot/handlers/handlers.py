@@ -2,11 +2,10 @@ import random
 
 from aiogram import F, Router, types
 from database.methods import get_random_channel
-from keyboards.keyboards import get_channel_rating_inline_keyboard
+from keyboards.builder import get_channel_rating_inline_keyboard
 from middlewares.middlewares import CooldownMW
-from service.log_manager import bot_logger
-
-from bot.service.bot_answers import bot_answers
+from utils.log_manager import bot_logger
+from utils.bot_answers import bot_answers
 
 decline_router = Router()
 basic_router = Router()

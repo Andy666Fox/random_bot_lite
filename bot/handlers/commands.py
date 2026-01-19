@@ -1,11 +1,10 @@
 from aiogram import types
 from aiogram.filters.command import Command, CommandObject
 from database.methods import get_db_stats, insert_suggested_channel, insert_user
-from keyboards.keyboards import get_main_keyboard
-from service.admin_validation import is_admin
-from service.bot_answers import bot_answers
-from service.channel_validation import validate_channel
-from service.log_manager import bot_logger
+from keyboards.builder import get_main_keyboard
+from utils.validation_manager import Validation
+from utils.bot_answers import bot_answers
+from utils.log_manager import bot_logger
 
 from handlers import basic_router
 
@@ -47,7 +46,7 @@ async def suggest_channel(message: types.Message, command: CommandObject):
     elif channelnick.startswith("@"):
         channelnick = channelnick[1:]
 
-    if await validate_channel(channelnick):
+    if await Validation.validate_channel(channelnick):
         status = await insert_suggested_channel(channelnick)
         match status[1]:
             case "created":
@@ -69,7 +68,7 @@ async def suggest_channel(message: types.Message, command: CommandObject):
 
 @basic_router.message(Command("stats"))
 async def show_stats(message: types.Message):
-    if not is_admin(message.from_user.id):
+    if not Validation.is_admin(message.from_user.id):
         await message.answer(bot_answers.ADMIN_VALIDATION_FAILED_MESSAGE)
         bot_logger.log_user_event(
             message.from_user.id, "db stats requested", data={"is_admin": False}

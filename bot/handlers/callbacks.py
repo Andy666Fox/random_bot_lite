@@ -1,8 +1,8 @@
 from aiogram import F
 from aiogram.types import CallbackQuery
 from database.methods import update_channel_rating
-from service.bot_answers import bot_answers
-from service.log_manager import bot_logger
+from utils.bot_answers import bot_answers
+from utils.log_manager import bot_logger
 
 from handlers import basic_router
 
