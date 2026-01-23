@@ -1,3 +1,4 @@
+# Deprecated file, func moved to admin\user area
 from aiogram import types
 from aiogram.filters.command import Command, CommandObject
 from database.methods import get_db_stats, insert_suggested_channel, insert_user
