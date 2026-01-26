@@ -1,4 +1,5 @@
 from aiogram.enums import ContentType
+from aiogram.fsm.state import State, StatesGroup
 
 BLOCKED_CONTENT_TYPES = [
     ContentType.PHOTO,
@@ -22,3 +23,8 @@ STOP_WORDS = {
     'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does',
     'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that'
 }
+
+class SuggestStates(StatesGroup):
+    waiting_for_channel = State()
+
+

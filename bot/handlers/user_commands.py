@@ -1,12 +1,15 @@
 from aiogram import F, Router, types
-from aiogram.filters.command import Command, CommandObject
+from aiogram.filters.command import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.filters import StateFilter
 
 from database.methods import insert_suggested_channel, insert_user, update_channel_rating
-from keyboards.builder import get_main_keyboard
+from keyboards.builder import get_main_keyboard, get_cancel_keyboard
 from middlewares.middlewares import CooldownMW
 from utils.log_manager import log_manager
 from utils.message_manager import message_manager
 from utils.validation_manager import validation_manager
+from utils.globals import SuggestStates
 
 user_commands_router = Router()
 user_commands_router.message.middleware(CooldownMW())
@@ -58,36 +61,85 @@ async def send_extra_commands(message: types.Message):
         "extra",
         data={"Looked for extra commands": message.from_user.id},
     )
-    await message.answer(message_manager.EXTRA_COMMANDS_DESCRIPTION)
+    await message.answer(message_manager.EXTRA_COMMANDS_DESCRIPTION,
+                        reply_markup=get_main_keyboard())
 
+async def _prompt_for_next_channel(message: types.Message, entry=True):
+    if entry:
+        await message.answer(
+            message_manager.FIRST_ASK_FOR_CHANNEL_LINK,
+            reply_markup=get_cancel_keyboard()
+        )
+    else:
+        await message.answer(
+            message_manager.LOOP_ASK_FOR_CHANNEL_LINK,
+            reply_markup=get_cancel_keyboard()
+        )
 
 @user_commands_router.message(Command("suggest"))
-async def suggest_channel(message: types.Message, command: CommandObject):
-    if not command.args:
-        await message.answer(message_manager.EMPTY_SUGGEST_ARGS)
+async def suggest_channel_start(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == SuggestStates.waiting_for_channel:
+        await message.answer(message_manager.SUGGEST_ALREADY_ACTIVE)
         return
+    
+    await state.set_state(SuggestStates.waiting_for_channel)
+    await _prompt_for_next_channel(message)
 
-    channelnick = command.args.strip()
-    if "t.me" in channelnick:
-        channelnick = channelnick.split("/")[-1]
-    elif channelnick.startswith("@"):
-        channelnick = channelnick[1:]
+    log_manager.log_system_event(
+        "suggest_mode_activated",
+        data={"username": message.from_user.username}
+    )
 
-    if await validation_manager.validate_channel(channelnick):
-        status = await insert_suggested_channel(channelnick)
+@user_commands_router.message(StateFilter(SuggestStates.waiting_for_channel), F.text == "Отмена")
+async def suggest_cancel(message: types.Message, state: FSMContext):
+    await state.clear()
+    await message.answer(
+        message_manager.SUGGEST_CANCELLED,
+        reply_markup=get_main_keyboard()
+    )
+
+    log_manager.log_system_event(
+        "suggest_mode_deactivated",
+        data={"reason": "user_cancelled",
+              "username": message.from_user.username}
+    )
+
+@user_commands_router.message(StateFilter(SuggestStates.waiting_for_channel))
+async def suggest_channel_process(message: types.Message, state: FSMContext):
+    linktext = message.text.strip()
+
+    if linktext.startswith('/'):
+        if linktext.startswith('/suggest'):
+            await message.answer(message_manager.SUGGEST_ALREADY_ACTIVE)
+            return
+
+    if "t.me" in linktext:
+        linktext = linktext.split("/")[-1]
+    elif linktext.startswith("@"):
+        linktext = linktext[1:]
+
+    if await validation_manager.validate_channel(linktext):
+        status = await insert_suggested_channel(linktext)
         match status[1]:
             case "created":
-                await message.answer(message_manager.SUGGEST_SUCCESS)
+                response = message_manager.SUGGEST_SUCCESS
             case "exists":
-                await message.answer(message_manager.SUGGEST_EXISTS)
+                response = message_manager.SUGGEST_EXISTS
             case "error":
-                await message.answer(message_manager.SUGGEST_FAIL)
+                response = message_manager.SUGGEST_FAIL
     else:
-        status = "failed"
-        await message.answer(message_manager.SUGGEST_FAIL)
+        status = ("failed", "invalid")
+        response = message_manager.SUGGEST_FAIL
 
     log_manager.log_user_event(
         message.from_user.id,
-        "suggest",
-        data={"User suggested channel": channelnick, "insert_status": status},
+        "suggest_attempt",
+        data={"input_link": message.text.strip(),
+              "extracted_nick": linktext,
+              "status": status,
+              "username": message.from_user.username},
     )
+
+    await message.answer(response)
+    await _prompt_for_next_channel(message, entry=False)

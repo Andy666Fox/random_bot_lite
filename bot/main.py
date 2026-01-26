@@ -17,7 +17,7 @@ async def main():
 
     bot = Bot(
         token=os.getenv("BOT_TOKEN")
-    )  # , default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN_V2)
+    )
 
     await bot.delete_webhook(drop_pending_updates=True)
     log_manager.log_system_event("Bot initialized")

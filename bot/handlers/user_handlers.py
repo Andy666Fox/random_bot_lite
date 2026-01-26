@@ -18,14 +18,11 @@ user_router.message.middleware(CooldownMW())
 async def handle_start_button(message: types.Message):
     user_id = message.from_user.id
     channel = await get_random_channel()
-    log_manager.log_user_event(
-         user_id, "search channel", data={f"Bot response to {message.from_user.username}": channel}
-    )
+
     content = await math_manager._get_channel_content(channel)
     image_bytes = _get_wordcloud_image(content)
 
     photo = BufferedInputFile(image_bytes, filename="channel_tags.png")
-    caption = f"https://t.me/{channel}"
 
     log_manager.log_user_event(
          user_id, "search channel", data={f"Bot response to {message.from_user.username}": channel}
@@ -35,9 +32,6 @@ async def handle_start_button(message: types.Message):
     await message.answer(f"https://t.me/{channel}",
                          link_preview_options=LinkPreviewOptions(is_disabled=False),
                          reply_markup=get_channel_rating_inline_keyboard(channel))
-
-
-
 
 
 @user_router.message(F.content_type.in_(BLOCKED_CONTENT_TYPES))
