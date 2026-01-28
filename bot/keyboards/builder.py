@@ -15,7 +15,7 @@ def get_channel_rating_inline_keyboard(channelnick: str):
     builder.adjust(2)
     return builder.as_markup()
 
-def get_cancel_keyboard():
+def get_suggest_cancel_keyboard():
     builder = ReplyKeyboardBuilder()
     builder.button(text="Отмена")
     return builder.as_markup(resize_keyboard=True, one_time_keyboard=False)

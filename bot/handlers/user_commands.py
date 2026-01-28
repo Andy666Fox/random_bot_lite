@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
 
 from database.methods import insert_suggested_channel, insert_user, update_channel_rating
-from keyboards.builder import get_main_keyboard, get_cancel_keyboard
+from keyboards.builder import get_main_keyboard, get_suggest_cancel_keyboard
 from middlewares.middlewares import CooldownMW
 from utils.log_manager import log_manager
 from utils.message_manager import message_manager
@@ -68,12 +68,12 @@ async def _prompt_for_next_channel(message: types.Message, entry=True):
     if entry:
         await message.answer(
             message_manager.FIRST_ASK_FOR_CHANNEL_LINK,
-            reply_markup=get_cancel_keyboard()
+            reply_markup=get_suggest_cancel_keyboard()
         )
     else:
         await message.answer(
             message_manager.LOOP_ASK_FOR_CHANNEL_LINK,
-            reply_markup=get_cancel_keyboard()
+            reply_markup=get_suggest_cancel_keyboard()
         )
 
 @user_commands_router.message(Command("suggest"))
