@@ -6,10 +6,10 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 from utils.log_manager import log_manager
 from utils.message_manager import message_manager
-
+from utils.defaults import defaults
 
 class CooldownMW(BaseMiddleware):
-    def __init__(self, cooldown_seconds: int = 1):
+    def __init__(self, cooldown_seconds: int = defaults.cooldown_seconds):
         super().__init__()
         self.user_last_action: dict[int, float] = {}
         self.cooldown = cooldown_seconds

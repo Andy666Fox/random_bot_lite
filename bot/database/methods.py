@@ -7,11 +7,12 @@ from sqlalchemy.sql.expression import text
 
 from utils.log_manager import log_manager
 from utils.math_manager import math_manager
+from utils.defaults import defaults
 from database.schemas import Channel, Rating, User
 from database.session_gen import get_session
 
 
-async def get_random_channel(limit: int = 1):
+async def get_random_channel(limit: int = defaults.channel_limit):
     try:
         async with get_session() as session:
             min_max_result = await session.execute(text("SELECT MIN(id), MAX(id) FROM channels"))
@@ -43,7 +44,7 @@ async def get_random_channel(limit: int = 1):
 async def insert_suggested_channel(channelnick: str):
     try:
         async with get_session() as session:
-            suggestion = Channel(channelnick=channelnick, status=1, avg_score=5.0)
+            suggestion = Channel(channelnick=channelnick, status=defaults.channel_status, avg_score=defaults.channel_avg_score)
             session.add(suggestion)
             await session.commit()
             await session.refresh(suggestion)
@@ -127,6 +128,7 @@ async def _update_channel_avg_score(channelnick: str):
             row = result.first()
             channel, rating = row
             bscore = await math_manager.get_bavg_score(rating.likes, rating.dislikes)
+
             log_manager.log_system_event(
                 "channel score updated",
                 data={
